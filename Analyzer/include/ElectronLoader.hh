@@ -12,10 +12,11 @@ using namespace baconhep;
 
 class ElectronLoader { 
 public:
-  ElectronLoader(TTree *iTree);
+  ElectronLoader(TTree *iTree,std::string iLabel="2017");
   ~ElectronLoader();
   void reset();
   void setupTree(TTree *iTree);
+  void setupTreeQbert(TTree *iTree);
   void load(int iEvent);
   void selectElectrons(double iRho,double iMet, std::vector<TLorentzVector> &iElectrons);
   std::vector<TElectron*> fLooseElectrons, fTightElectrons, fHEEPElectrons;
@@ -32,6 +33,6 @@ protected:
   TTree        *fTree;
   std::vector<double>     fVars;
   int           fN;
-
+  std::string   fYear;
 };
 #endif

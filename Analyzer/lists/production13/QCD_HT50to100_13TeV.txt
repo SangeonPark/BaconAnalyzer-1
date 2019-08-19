@@ -1,0 +1,5 @@
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT50to100_13TeV/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164948/0000/Output_105.root
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT50to100_13TeV/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164948/0000/Output_136.root
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT50to100_13TeV/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164948/0000/Output_148.root
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT50to100_13TeV/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164948/0000/Output_28.root
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT50to100_13TeV/QCD_HT50to100_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164948/0000/Output_54.root

@@ -10,19 +10,20 @@
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "JECLoader.hh"
 #include "TRandom3.h"
 
 using namespace baconhep;
 
 class JetLoader { 
 public:
-  JetLoader(TTree *iTree, bool iData=false);
+  JetLoader(TTree *iTree,  bool iData=false,  std::string iLabel="2017");
   ~JetLoader();
   void reset();
   void setupTree(TTree *iTree, std::string iJetLabel);
   void load(int iEvent);
   void selectJets(std::vector<TLorentzVector> &iElectrons, std::vector<TLorentzVector> &iMuons, std::vector<TLorentzVector> &iPhotons, std::vector<TLorentzVector> &iVJets, double iRho, unsigned int runNum);
-  std::vector<TJet*> fLooseJets;
+  std::vector<TJet*> fTightJets;
   std::vector<const TJet*> fGoodJets, selectedJets15, selectedJets8;
   std::vector<TLorentzVector> selectedJets;
 
@@ -30,29 +31,13 @@ public:
   void fillJetCorr(int iN,std::vector<TJet*> &iObjects,std::vector<double> &iVals, double iRho, unsigned int runNum);
   void addOthers(std::string iHeader,TTree *iTree,int iN,std::vector<double> &iVals);
   void fillOthers(int iN,std::vector<TJet*> &iObjects,std::vector<double> &iVals, std::vector<TLorentzVector> iVJets, double iRho, unsigned int runNum);
-
   
-  // JEC tools
-  std::vector<FactorizedJetCorrector*> getJetCorrector() { return JetCorrector; }
-  std::vector<std::pair<int,int> > getJetCorrectionsIOV() { return JetCorrectionsIOV; }
-  double getJecUnc( float pt, float eta, int run );  
-  double JetEnergyCorrectionFactor( double jetRawPt, double jetEta, double jetPhi, double jetE,
-				    double rho, double jetArea,
-				    int run,
-				    std::vector<std::pair<int,int> > JetCorrectionsIOV,
-				    std::vector<FactorizedJetCorrector*> jetcorrector,  
-				    int jetCorrectionLevel = -1,
-				    bool printDebug = false);
-  double JetEnergyCorrectionFactor( double jetRawPt, double jetEta, double jetPhi, double jetE,
-				    double rho, double jetArea,					  
-				    FactorizedJetCorrector* jetcorrector,  
-				    int jetCorrectionLevel = -1,
-				    bool printDebug = false);
   TRandom3* r;
 
-  const double CSVL = 0.5426; // CSVv2 WP
-  const double CSVM = 0.8484;
-  const double CSVT = 0.9535;
+  // default is 2017
+  double DEEPCSVL;
+  double DEEPCSVM;
+  double DEEPCSVT;
 
   int           fNJetsPt30;
   int           fNJetsPt30jesUp;
@@ -70,6 +55,7 @@ public:
 
   int           fNVars;
   int           fNOtherVars; 
+
 protected: 
   TClonesArray *fJets;
   TBranch      *fJetBr;
@@ -77,6 +63,9 @@ protected:
   TBranch      *fJetBrCHS;
 
   TTree        *fTree;
+
+  JECLoader    *fJEC;
+
   int           fNFwdPt30;
   int           fNBTagsLPt30;
   int           fNBTagsMPt30;
@@ -97,29 +86,30 @@ protected:
   std::vector<int>           fNBTagsMPt150dR08;
   std::vector<int>           fNBTagsTPt150dR08;
 
-  int           fN;
-  int           fNV;
-  
-  std::vector<double>      fVars;
-  FactorizedJetCorrector   *fJetCorr;
-
-  std::string cmsswPath;
-  
-  // for jet energy corrections
+  int  fN;
+  int  fNV;
   bool isData;
-  void loadCMSSWPath();
-  void loadJECs(bool isData);
-  void loadJECs_Rereco(bool isData);
-  std::vector<std::vector<JetCorrectorParameters> > correctionParameters;
-  std::vector<FactorizedJetCorrector*> JetCorrector;
-  std::vector<JetCorrectionUncertainty*> jecUnc;
-  std::vector<std::pair<int,int> > JetCorrectionsIOV;
-  JME::JetResolution resolution;
-  JME::JetResolutionScaleFactor resolution_sf;
+  std::vector<double>      fVars;
+
   // Gaussian random numbers (one for each jet)
   std::vector<double> x1List;
-  std::vector<double> x2List;
-  std::vector<double> x3List;
-  
+
+  // b-tag WP
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation2016Legacy
+  double fdeepCSVL2016 = 0.2217;
+  double fdeepCSVM2016 = 0.6321;
+  double fdeepCSVT2016 = 0.8953;
+
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation94X
+  double fdeepCSVL2017 = 0.1522;
+  double fdeepCSVM2017 = 0.4941;
+  double fdeepCSVT2017 = 0.8001;
+
+  // https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation102X
+  double fdeepCSVL2018 = 0.1241;
+  double fdeepCSVM2018 = 0.4184;
+  double fdeepCSVT2018 = 0.7527;
+
+  std::string fYear;
 };
 #endif

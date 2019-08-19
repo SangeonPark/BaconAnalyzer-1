@@ -1,0 +1,2 @@
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT200to300_13TeV_ext/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164310/0000/Output_108.root
+root://131.225.204.161:1094//store/group/lpcbacon/13/QCD_HT200to300_13TeV_ext/QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/CRAB3/171109_164310/0000/Output_171.root
