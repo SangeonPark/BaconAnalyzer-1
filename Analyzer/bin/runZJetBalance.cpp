@@ -13,7 +13,7 @@
 #include "../include/GenLoader.hh"
 #include "../include/EvtLoader.hh"
 #include "../include/MuonLoader.hh"
-#include "../include/MuonLoader.hh"
+#include "../include/ElectronLoader.hh"
 #include "../include/PhotonLoader.hh"
 #include "../include/JetLoader.hh"
 #include "../include/VJetLoader.hh"
