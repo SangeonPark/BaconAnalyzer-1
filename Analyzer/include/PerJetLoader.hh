@@ -16,7 +16,6 @@
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
-#include "JECLoader.hh"
 
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/JetDefinition.hh"
@@ -32,16 +31,18 @@
 
 using namespace baconhep;
 
-class PerJetLoader { 
+class PerJetLoader {
 public:
-  PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std::string iJetCHS="AK8CHS",std::string iAddJetCHS="AddAK8CHS",int iN=1, bool iData=false,std::string iLabel="2017");
+  PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std::string iJetCHS="AK8CHS",std::string iAddJetCHS="AddAK8CHS",int iN=1, bool iData=false);
   ~PerJetLoader();
   double correction(TJet &iJet,double iRho);
   void reset();
-  void setupTreeQbert(TTree *iTree,std::string iJetLabel);
+  void resetZprime();
+  void setupTree(TTree *iTree,std::string iJetLabel);
+  void setupTreeZprime(TTree *iTree,std::string iJetLabel);
   void load(int iEvent);
-  void selectVJets(std::vector<TLorentzVector> &iElectrons, std::vector<TLorentzVector> &iMuons, std::vector<TLorentzVector> &iPhotons, double dR, double iRho, double metphi, unsigned int runNum);
-  void fillVJet(int iN,std::vector<TJet*> &iObjects,double dR, double iRho, double metphi, unsigned int runNum);
+  void selectVJets(std::vector<TLorentzVector> &iElectrons, std::vector<TLorentzVector> &iMuons, std::vector<TLorentzVector> &iPhotons, double dR, double iRho, unsigned int runNum);
+  void fillVJet(int iN,std::vector<TJet*> &iObjects,double dR, double iRho, unsigned int runNum);
   void matchJet(std::vector<TLorentzVector> iJets1, TLorentzVector iJet2, double dR, int jIndex);
   TAddJet *getAddJet(TJet *iJet);
   TAddJet *getAddJetCHS(TJet *iJet);
@@ -58,21 +59,36 @@ public:
   std::vector<TLorentzVector> selectedVJetsByDoubleB, selectedVJetsCHSByDoubleB;
 
 
-  const double CSVL = 0.5426; // CSVv2SubJet WP 
+  const double CSVL = 0.5426; // CSVv2SubJet WP
   const double CSVM = 0.8484;
+  // JEC tools
+  std::vector<FactorizedJetCorrector*> getJetCorrector() { return JetCorrector; }
+  std::vector<std::pair<int,int> > getJetCorrectionsIOV() { return JetCorrectionsIOV; }
+  double getJecUnc( float pt, float eta, int run );
+  double JetEnergyCorrectionFactor( double jetRawPt, double jetEta, double jetPhi, double jetE,
+				    double rho, double jetArea,
+				    int run,
+				    std::vector<std::pair<int,int> > JetCorrectionsIOV,
+				    std::vector<FactorizedJetCorrector*> jetcorrector,
+				    int jetCorrectionLevel = -1,
+				    bool printDebug = false);
+  double JetEnergyCorrectionFactor( double jetRawPt, double jetEta, double jetPhi, double jetE,
+				    double rho, double jetArea,
+				    FactorizedJetCorrector* jetcorrector,
+				    int jetCorrectionLevel = -1,
+				    bool printDebug = false);
   TRandom3* r;
 
-  //bool aktSort = true; 
-  bool aktSort = false;
+  bool aktSort = true;
 
   TClonesArray *fVJets;
   TClonesArray *fPFs;
 
-protected: 
+protected:
   fastjet::AreaDefinition *areaDef = 0;
   fastjet::GhostedAreaSpec *activeArea = 0;
   fastjet::JetDefinition *jetDef = 0;
-  
+
   //TClonesArray *fVJets;
   TBranch      *fVJetBr;
   TClonesArray *fVAddJets;
@@ -90,26 +106,33 @@ protected:
 
   TTree        *fTree;
 
-  JECLoader    *fJEC;
-
   int           fNLooseVJets, fNLooseVJetsCHS;
   int           fNTightVJets, fNTightVJetsCHS;
   int           fNProngs;
 
-  std::map<std::string,float> fSingletons; 
+  std::map<std::string,float> fSingletons;
   int fN_cpf, fN_ipf, fN_sv, fN_part;
 	std::map<std::string,float*> fCPFArrs, fIPFArrs, fSVArrs, fPartArrs;
   std::vector<std::string> fTrigString;
 
   int           fN;
-  
+
   std::string cmsswPath;
-  
+
   // for jet energy corrections
   bool isData;
-  std::string fYear;
-
+  void loadCMSSWPath();
+  void loadJECs(bool isData);
+  void loadJECs_Rereco(bool isData);
+  std::vector<std::vector<JetCorrectorParameters> > correctionParameters;
+  std::vector<FactorizedJetCorrector*> JetCorrector;
+  std::vector<JetCorrectionUncertainty*> jecUnc;
+  std::vector<std::pair<int,int> > JetCorrectionsIOV;
+  JME::JetResolution resolution;
+  JME::JetResolutionScaleFactor resolution_sf;
   // Gaussian random numbers (one for each jet)
   std::vector<double> x1List;
+  std::vector<double> x2List;
+  std::vector<double> x3List;
 };
 #endif
