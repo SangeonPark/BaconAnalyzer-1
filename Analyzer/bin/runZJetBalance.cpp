@@ -193,7 +193,7 @@ int main( int argc, char **argv ) {
 
     // AK4Puppi Jets
     fVJet4     ->load(i0);
-    fVJet4     ->selectVJets(cleaningElectrons,cleaningMuons,cleaningPhotons,0.4,fEvt->fRho,fEvt->fRun);
+    fVJet4     ->selectVJets(cleaningElectrons,cleaningMuons,cleaningPhotons,0.4,fEvt->fRho,fEvt->fMetPhi,fEvt->fRun);
     lOut->Fill();
     neventstest++;
   }
