@@ -1,5 +1,5 @@
 <use name="BaconAna/DataFormats"/>
-<use name="BaconAnalyzer/Analyzer"/>
+<use name="BaconAnalyzer-1/Analyzer"/>
 <use name="root"/>
 <flags CXXFLAGS="-g -Wall"/>
 <bin file="runZprime.cpp" name="runZprime"> </bin>
@@ -8,3 +8,4 @@
 <bin file="RemoveDuplicateEvents.cpp" name="RemoveDuplicateEvents"> </bin>
 <bin file="runPFJetsToJUNIPR.cpp" name="runPFJetsToJUNIPR"> </bin>
 <bin file="runQbert.cpp" name="runQbert"> </bin>
+<bin file="runZJetBalance.cpp" name="runZJetBalance"> </bin>
