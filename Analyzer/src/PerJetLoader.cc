@@ -1,6 +1,6 @@
 #include "../include/PerJetLoader.hh"
 #include <cmath>
-#include <iostream> 
+#include <iostream>
 
 #include <string>
 #include <sstream>
@@ -20,7 +20,7 @@ struct JetHistory {
   int child_idx;
 };
 
-PerJetLoader::PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std::string iJetCHS,std::string iAddJetCHS,int iN, bool iData,std::string iLabel) { 
+PerJetLoader::PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std::string iJetCHS,std::string iAddJetCHS,int iN, bool iData,std::string iLabel) {
   fVJets         = new TClonesArray("baconhep::TJet");
   fVAddJets      = new TClonesArray("baconhep::TAddJet");
   fGens         = new TClonesArray("baconhep::TGenParticle");
@@ -41,10 +41,10 @@ PerJetLoader::PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std
 
   fN = iN;
 
-  isData = iData;  
+  isData = iData;
   fYear=iLabel;
 
-  fJEC = new JECLoader(iData,iLabel,"AK8PFPuppi");
+  fJEC = new JECLoader(iData,iLabel,"AK4PFPuppi");
   r = new TRandom3(1993);
 
   const std::string cmssw_base = getenv("CMSSW_BASE");
@@ -57,10 +57,10 @@ PerJetLoader::PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std
   areaDef = new fastjet::AreaDefinition(fastjet::active_area_explicit_ghosts,*activeArea);
 
   // jetDef = new fastjet::JetDefinition(fastjet::cambridge_algorithm, 0.8);
-  jetDef = new fastjet::JetDefinition(fastjet::antikt_algorithm, 0.8);
+  jetDef = new fastjet::JetDefinition(fastjet::antikt_algorithm, 0.4);
 }
 
-PerJetLoader::~PerJetLoader() { 
+PerJetLoader::~PerJetLoader() {
   delete fVJets;
   delete fVJetBr;
   delete fVAddJets;
@@ -71,13 +71,13 @@ PerJetLoader::~PerJetLoader() {
   delete fPFBr;
   delete fSVs;
   delete fSVBr;
-  for (auto &iter : fCPFArrs) 
+  for (auto &iter : fCPFArrs)
     delete iter.second;
-  for (auto &iter : fIPFArrs) 
+  for (auto &iter : fIPFArrs)
     delete iter.second;
-  for (auto &iter : fSVArrs) 
+  for (auto &iter : fSVArrs)
     delete iter.second;
-  for (auto &iter : fPartArrs) 
+  for (auto &iter : fPartArrs)
     delete iter.second;
   delete activeArea;
   delete areaDef;
@@ -85,9 +85,9 @@ PerJetLoader::~PerJetLoader() {
   delete fJEC;
 }
 
-void PerJetLoader::reset() { 
+void PerJetLoader::reset() {
   fNLooseVJets        = 0;
-  fNTightVJets        = 0;  
+  fNTightVJets        = 0;
   for(int i0 = 0; i0 < int(fisTightVJet.size()); i0++) fisTightVJet[i0] = -999;
   selectedVJets.clear();
   fLooseVJets.clear();
@@ -97,24 +97,24 @@ void PerJetLoader::reset() {
   }
   fN_cpf = 0; fN_ipf = 0; fN_sv = 0;
   for (auto &iter : fCPFArrs) {
-    for (unsigned i = 0; i != NCPF; ++i) 
+    for (unsigned i = 0; i != NCPF; ++i)
       fCPFArrs[iter.first][i] = 0;
   }
   for (auto &iter : fIPFArrs) {
-    for (unsigned i = 0; i != NIPF; ++i) 
+    for (unsigned i = 0; i != NIPF; ++i)
       fIPFArrs[iter.first][i] = 0;
   }
   for (auto &iter : fSVArrs) {
-    for (unsigned i = 0; i != NSV; ++i) 
+    for (unsigned i = 0; i != NSV; ++i)
       fSVArrs[iter.first][i] = 0;
   }
   for (auto &iter : fPartArrs) {
-    for (unsigned i = 0; i != NPART; ++i) 
+    for (unsigned i = 0; i != NPART; ++i)
       fPartArrs[iter.first][i] = 0;
   }
 }
 
-void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) { 
+void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) {
   reset();
 
   fSingletons.clear();
@@ -158,7 +158,7 @@ void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) {
   fSingletons["e3_v2_b1"] = 0;
   fSingletons["e4_v1_b1"] = 0;
   fSingletons["e4_v2_b1"] = 0;
-  fSingletons["e2_sdb1"] = 0; // Correlation function inputs beta=1 soft-dropped 
+  fSingletons["e2_sdb1"] = 0; // Correlation function inputs beta=1 soft-dropped
   fSingletons["e3_sdb1"] = 0;
   fSingletons["e3_v1_sdb1"] = 0;
   fSingletons["e3_v2_sdb1"] = 0;
@@ -185,7 +185,7 @@ void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) {
   fSingletons["decayId2_1"] = -1;
   fSingletons["decayId2_3"] = -1;
   fSingletons["decayId2_4"] = -1;
-  fSingletons["nB"] = 0; 
+  fSingletons["nB"] = 0;
   fSingletons["nC"] = 0;
   fSingletons["partonPt"] = 0;
   fSingletons["partonEta"] = 0;
@@ -216,51 +216,51 @@ void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) {
   fSingletons["metlepphi"] = 0; // met
   fSingletons["metphi"] = 0;
 
-  fCPFArrs["cpf_pt"] = new float[NCPF]; 
-  fCPFArrs["cpf_eta"] = new float[NCPF]; 
-  fCPFArrs["cpf_phi"] = new float[NCPF]; 
-  fCPFArrs["cpf_m"] = new float[NCPF]; 
-  fCPFArrs["cpf_e"] = new float[NCPF]; 
-  fCPFArrs["cpf_q"] = new float[NCPF]; 
-  fCPFArrs["cpf_pfType"] = new float[NCPF]; 
-  fCPFArrs["cpf_vtxID"] = new float[NCPF]; 
-  fCPFArrs["cpf_trkChi2"] = new float[NCPF]; 
-  fCPFArrs["cpf_pup"] = new float[NCPF]; 
-  fCPFArrs["cpf_vtxChi2"] = new float[NCPF]; 
-  fCPFArrs["cpf_ecalE"] = new float[NCPF]; 
-  fCPFArrs["cpf_hcalE"] = new float[NCPF]; 
-  fCPFArrs["cpf_d0"] = new float[NCPF]; 
-  fCPFArrs["cpf_dz"] = new float[NCPF]; 
-  fCPFArrs["cpf_d0Err"] = new float[NCPF]; 
-  fCPFArrs["cpf_dptdpt"] = new float[NCPF]; 
-  fCPFArrs["cpf_detadeta"] = new float[NCPF]; 
-  fCPFArrs["cpf_dphidphi"] = new float[NCPF]; 
-  fCPFArrs["cpf_dxydxy"] = new float[NCPF]; 
-  fCPFArrs["cpf_dzdz"] = new float[NCPF]; 
-  fCPFArrs["cpf_dxydz"] = new float[NCPF]; 
-  fCPFArrs["cpf_dphidxy"] = new float[NCPF]; 
-  fCPFArrs["cpf_dlambdadz"] = new float[NCPF]; 
+  fCPFArrs["cpf_pt"] = new float[NCPF];
+  fCPFArrs["cpf_eta"] = new float[NCPF];
+  fCPFArrs["cpf_phi"] = new float[NCPF];
+  fCPFArrs["cpf_m"] = new float[NCPF];
+  fCPFArrs["cpf_e"] = new float[NCPF];
+  fCPFArrs["cpf_q"] = new float[NCPF];
+  fCPFArrs["cpf_pfType"] = new float[NCPF];
+  fCPFArrs["cpf_vtxID"] = new float[NCPF];
+  fCPFArrs["cpf_trkChi2"] = new float[NCPF];
+  fCPFArrs["cpf_pup"] = new float[NCPF];
+  fCPFArrs["cpf_vtxChi2"] = new float[NCPF];
+  fCPFArrs["cpf_ecalE"] = new float[NCPF];
+  fCPFArrs["cpf_hcalE"] = new float[NCPF];
+  fCPFArrs["cpf_d0"] = new float[NCPF];
+  fCPFArrs["cpf_dz"] = new float[NCPF];
+  fCPFArrs["cpf_d0Err"] = new float[NCPF];
+  fCPFArrs["cpf_dptdpt"] = new float[NCPF];
+  fCPFArrs["cpf_detadeta"] = new float[NCPF];
+  fCPFArrs["cpf_dphidphi"] = new float[NCPF];
+  fCPFArrs["cpf_dxydxy"] = new float[NCPF];
+  fCPFArrs["cpf_dzdz"] = new float[NCPF];
+  fCPFArrs["cpf_dxydz"] = new float[NCPF];
+  fCPFArrs["cpf_dphidxy"] = new float[NCPF];
+  fCPFArrs["cpf_dlambdadz"] = new float[NCPF];
 
-  fIPFArrs["ipf_pt"] = new float[NIPF]; 
-  fIPFArrs["ipf_eta"] = new float[NIPF]; 
-  fIPFArrs["ipf_phi"] = new float[NIPF]; 
-  fIPFArrs["ipf_m"] = new float[NIPF]; 
-  fIPFArrs["ipf_e"] = new float[NIPF]; 
-  fIPFArrs["ipf_pfType"] = new float[NIPF]; 
-  fIPFArrs["ipf_pup"] = new float[NIPF]; 
-  fIPFArrs["ipf_ecalE"] = new float[NIPF]; 
-  fIPFArrs["ipf_hcalE"] = new float[NIPF]; 
-  fIPFArrs["ipf_d0"] = new float[NIPF]; 
-  fIPFArrs["ipf_dz"] = new float[NIPF]; 
-  fIPFArrs["ipf_d0Err"] = new float[NIPF]; 
-  fIPFArrs["ipf_dptdpt"] = new float[NIPF]; 
-  fIPFArrs["ipf_detadeta"] = new float[NIPF]; 
-  fIPFArrs["ipf_dphidphi"] = new float[NIPF]; 
-  fIPFArrs["ipf_dxydxy"] = new float[NIPF]; 
-  fIPFArrs["ipf_dzdz"] = new float[NIPF]; 
-  fIPFArrs["ipf_dxydz"] = new float[NIPF]; 
-  fIPFArrs["ipf_dphidxy"] = new float[NIPF]; 
-  fIPFArrs["ipf_dlambdadz"] = new float[NIPF]; 
+  fIPFArrs["ipf_pt"] = new float[NIPF];
+  fIPFArrs["ipf_eta"] = new float[NIPF];
+  fIPFArrs["ipf_phi"] = new float[NIPF];
+  fIPFArrs["ipf_m"] = new float[NIPF];
+  fIPFArrs["ipf_e"] = new float[NIPF];
+  fIPFArrs["ipf_pfType"] = new float[NIPF];
+  fIPFArrs["ipf_pup"] = new float[NIPF];
+  fIPFArrs["ipf_ecalE"] = new float[NIPF];
+  fIPFArrs["ipf_hcalE"] = new float[NIPF];
+  fIPFArrs["ipf_d0"] = new float[NIPF];
+  fIPFArrs["ipf_dz"] = new float[NIPF];
+  fIPFArrs["ipf_d0Err"] = new float[NIPF];
+  fIPFArrs["ipf_dptdpt"] = new float[NIPF];
+  fIPFArrs["ipf_detadeta"] = new float[NIPF];
+  fIPFArrs["ipf_dphidphi"] = new float[NIPF];
+  fIPFArrs["ipf_dxydxy"] = new float[NIPF];
+  fIPFArrs["ipf_dzdz"] = new float[NIPF];
+  fIPFArrs["ipf_dxydz"] = new float[NIPF];
+  fIPFArrs["ipf_dphidxy"] = new float[NIPF];
+  fIPFArrs["ipf_dlambdadz"] = new float[NIPF];
 
   fSVArrs["sv_pt"] = new float[NSV];
   fSVArrs["sv_eta"] = new float[NSV];
@@ -286,7 +286,7 @@ void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) {
   fPartArrs["parton_phi"] = new float[NPART];
   fPartArrs["parton_m"] = new float[NPART];
   fPartArrs["parton_pdgid"] = new float[NPART];
-  
+
   fTree = iTree;
   for (auto &iter : fSingletons) {
     std::stringstream bname;
@@ -328,7 +328,7 @@ void PerJetLoader::setupTreeQbert(TTree *iTree, std::string iJetLabel) {
 
 }
 
-void PerJetLoader::load(int iEvent) { 
+void PerJetLoader::load(int iEvent) {
   fVJets       ->Clear();
   fVJetBr      ->GetEntry(iEvent);
   fVAddJets    ->Clear();
@@ -341,22 +341,22 @@ void PerJetLoader::load(int iEvent) {
   fSVBr       ->GetEntry(iEvent);
 }
 
-void PerJetLoader::selectVJets(std::vector<TLorentzVector> &iElectrons, 
-                               std::vector<TLorentzVector> &iMuons, 
-                               std::vector<TLorentzVector> &iPhotons, 
-                               double dR, 
-                               double iRho, 
+void PerJetLoader::selectVJets(std::vector<TLorentzVector> &iElectrons,
+                               std::vector<TLorentzVector> &iMuons,
+                               std::vector<TLorentzVector> &iPhotons,
+                               double dR,
+                               double iRho,
 			       double metphi,
                                unsigned int runNum)
 {
-  reset();  
+  reset();
   int lCount(0), lCountT(0);
-  for  (int i0 = 0; i0 < fVJets->GetEntriesFast(); i0++) { 
-    TJet *pVJet = (TJet*)((*fVJets)[i0]);    
+  for  (int i0 = 0; i0 < fVJets->GetEntriesFast(); i0++) {
+    TJet *pVJet = (TJet*)((*fVJets)[i0]);
     if(passVeto(pVJet->eta,pVJet->phi,dR,iElectrons))                      continue;
     if(passVeto(pVJet->eta,pVJet->phi,dR,iMuons))                          continue;
     if(passVeto(pVJet->eta,pVJet->phi,dR,iPhotons))                        continue;
-    
+
     double JEC_old = (pVJet->pt)/(pVJet->ptRaw);
     TLorentzVector vPJet;
     vPJet.SetPtEtaPhiM(pVJet->ptRaw, pVJet->eta, pVJet->phi, (pVJet->mass)/JEC_old);
@@ -366,39 +366,39 @@ void PerJetLoader::selectVJets(std::vector<TLorentzVector> &iElectrons,
                                                  runNum);
     double jetCorrPt = JEC*(pVJet->ptRaw);
     double jetCorrE = JEC*(vPJet.E());
-    JME::JetParameters parameters = {{JME::Binning::JetPt, jetCorrPt}, {JME::Binning::JetEta, pVJet->eta}, {JME::Binning::Rho, TMath::Min(iRho,44.30)}}; 
+    JME::JetParameters parameters = {{JME::Binning::JetPt, jetCorrPt}, {JME::Binning::JetEta, pVJet->eta}, {JME::Binning::Rho, TMath::Min(iRho,44.30)}};
     float sigma_MC = fJEC->resolution.getResolution(parameters);
     float sf = fJEC->resolution_sf.getScaleFactor(parameters);
     float sfUp = fJEC->resolution_sf.getScaleFactor(parameters, Variation::UP);
     float sfDown = fJEC->resolution_sf.getScaleFactor(parameters, Variation::DOWN);
     double x1 = r->Gaus();
-    double jetEnergySmearFactor = 1.0; 
-    double jetEnergySmearFactorUp = 1.0; 
-    double jetEnergySmearFactorDown = 1.0;    
-    if (!isData) {      
+    double jetEnergySmearFactor = 1.0;
+    double jetEnergySmearFactorUp = 1.0;
+    double jetEnergySmearFactorDown = 1.0;
+    if (!isData) {
       jetEnergySmearFactor = 1.0 + sqrt(sf*sf - 1.0)*sigma_MC*x1;
       jetEnergySmearFactorUp = 1.0 + sqrt(sfUp*sfUp - 1.0)*sigma_MC*x1;
       jetEnergySmearFactorDown = 1.0 + sqrt(sfDown*sfDown - 1.0)*sigma_MC*x1;
-    }    
-    double unc = fJEC->getJecUnc( jetCorrPt, pVJet->eta, runNum ); //use run=999 as default                                                                                                                           
+    }
+    double unc = fJEC->getJecUnc( jetCorrPt, pVJet->eta, runNum ); //use run=999 as default
     double jetCorrPtSmear = jetCorrPt*jetEnergySmearFactor;
     double jetPtJESUp = jetCorrPt*jetEnergySmearFactor*(1+unc);
     double jetPtJESDown = jetCorrPt*jetEnergySmearFactor/(1+unc);
     double jetPtJERUp = jetCorrPt*jetEnergySmearFactorUp;
     double jetPtJERDown = jetCorrPt*jetEnergySmearFactorDown;
-    
-    double jetCorrESmear = jetCorrE*jetEnergySmearFactor*(1+unc);    
+
+    double jetCorrESmear = jetCorrE*jetEnergySmearFactor*(1+unc);
     double jetEJESUp = jetCorrE*jetEnergySmearFactor*(1+unc);
     double jetEJESDown = jetCorrE*jetEnergySmearFactor/(1+unc);
     double jetEJERUp = jetCorrE*jetEnergySmearFactorUp;
     double jetEJERDown = jetCorrE*jetEnergySmearFactorDown;
-    
+
     TLorentzVector thisJet;  thisJet.SetPtEtaPhiE(jetCorrPtSmear, pVJet->eta, pVJet->phi, jetCorrESmear);
     TLorentzVector thisJetJESUp;  thisJetJESUp.SetPtEtaPhiE(jetPtJESUp, pVJet->eta, pVJet->phi, jetEJESUp);
     TLorentzVector thisJetJESDown; thisJetJESDown.SetPtEtaPhiE(jetPtJESDown, pVJet->eta, pVJet->phi, jetEJESDown);
     TLorentzVector thisJetJERUp;  thisJetJERUp.SetPtEtaPhiE(jetPtJERUp,  pVJet->eta, pVJet->phi, jetEJERUp);
     TLorentzVector thisJetJERDown; thisJetJERDown.SetPtEtaPhiE(jetPtJERDown,  pVJet->eta, pVJet->phi, jetEJERDown);
-    
+
     if(jetCorrPtSmear   <=  200)                                           continue;
     if(fabs(pVJet->eta) >=  2.5)                                           continue;
     if(!passJetTightSel(pVJet,fYear))                                      continue;
@@ -425,16 +425,16 @@ double SignedDeltaPhi(double phi1, double phi2) {
 
 void PerJetLoader::fillVJet(int iN,
                             std::vector<TJet*> &iObjects,
-                            double dR, 
-                            double iRho, 
+                            double dR,
+                            double iRho,
 			    double metphi,
                             unsigned int runNum)
-{ 
+{
   int lMin = iObjects.size();
   if(iN < lMin) lMin = iN;
   for(int i0 = 0; i0 < lMin; i0++) {
 
-    //JEC    
+    //JEC
     double x1 = x1List[i0];
     double JEC_old = (iObjects[i0]->pt)/(iObjects[i0]->ptRaw);
     TLorentzVector vPJet;
@@ -444,7 +444,7 @@ void PerJetLoader::fillVJet(int iN,
                                                  iRho, iObjects[i0]->area,
                                                  runNum);
     double jetCorrPt = JEC*(iObjects[i0]->ptRaw);
-    double unc = fJEC->getJecUnc( jetCorrPt, iObjects[i0]->eta, runNum ); //use run=999 as default    
+    double unc = fJEC->getJecUnc( jetCorrPt, iObjects[i0]->eta, runNum ); //use run=999 as default
     JME::JetParameters parameters = {{JME::Binning::JetPt, jetCorrPt}, {JME::Binning::JetEta, iObjects[i0]->eta}, {JME::Binning::Rho, TMath::Min(iRho,44.30)}};
     float sigma_MC = fJEC->resolution.getResolution(parameters);
     float sf = fJEC->resolution_sf.getScaleFactor(parameters);
@@ -453,7 +453,7 @@ void PerJetLoader::fillVJet(int iN,
     double jetEnergySmearFactor = 1.0 + sqrt(sf*sf - 1.0)*sigma_MC*x1;
     double jetEnergySmearFactorUp = 1.0 + sqrt(sfUp*sfUp - 1.0)*sigma_MC*x1;
     double jetEnergySmearFactorDown = 1.0 + sqrt(sfDown*sfDown - 1.0)*sigma_MC*x1;
-    
+
     double jetCorrPtSmear = jetCorrPt*jetEnergySmearFactor;
     double jetPtJESUp = jetCorrPt*jetEnergySmearFactor*(1+unc);
     double jetPtJESDown = jetCorrPt*jetEnergySmearFactor/(1+unc);
@@ -515,7 +515,7 @@ void PerJetLoader::fillVJet(int iN,
     fSingletons["jetPtJERUp"] = jetPtJERUp;
     fSingletons["jetPtJERDown"] = jetPtJERDown;
     fSingletons["nC"] = (iObjects[i0]->vtxFlavor % 1000) / 100;
-    fSingletons["nB"] = (iObjects[i0]->vtxFlavor - (iObjects[i0]->vtxFlavor % 1000)) / 1000; 
+    fSingletons["nB"] = (iObjects[i0]->vtxFlavor - (iObjects[i0]->vtxFlavor % 1000)) / 1000;
 
     fSingletons["lepCPt"]= pAddJet->lepCPt;
     fSingletons["lepCEta"] = pAddJet->lepCEta;
@@ -559,7 +559,7 @@ void PerJetLoader::fillVJet(int iN,
           apdgid != 21 &&
           apdgid != 15 &&
           apdgid != 11 &&
-          apdgid != 13) 
+          apdgid != 13)
         continue;
 
       if (part->pt < threshold)
@@ -584,18 +584,18 @@ void PerJetLoader::fillVJet(int iN,
       for (unsigned jG = 0; jG != nG; ++jG) {
         TGenParticle *child = (TGenParticle*)(*fGens)[jG];
         if (child->parent != (int)iG)
-          continue; // only consider splittings from the current particle 
+          continue; // only consider splittings from the current particle
 
         if (dau1)
-          dau2 = child; 
-        else 
-          dau1 = child; 
+          dau2 = child;
+        else
+          dau1 = child;
         if (dau1 && dau2)
           break; // ! assume it's not possible to have 1->N for N>2
                  // ... this is not a good assumption in the miniaod-compressed
                  // showering history
       }
-      if (dau1 && dau1->pt > threshold && matchJet(dau1) && 
+      if (dau1 && dau1->pt > threshold && matchJet(dau1) &&
           dau2 && dau2->pt > threshold && matchJet(dau2)) {
         if (foundParent) {
           partons.erase(partons.find(foundParent)); // remove the ancestor
@@ -605,18 +605,18 @@ void PerJetLoader::fillVJet(int iN,
       } else if (foundParent) {
         // this means we found an ancestor parton, but this isn't the vertex that gives
         // a large 1->2 splitting, so we can skip it as an intermediary
-        continue; 
+        continue;
       } else {
         // it passes all the checks and doesn't have an ancestor - keep it!
         partons.insert(part);
       }
 
-    }  
+    }
     nP = std::min((int)partons.size(), NPART);
     fSingletons["nProngs"] = nP;
 
     std::vector<TGenParticle*> vPartons; vPartons.reserve(nP);
-    for (auto &iter : partons) 
+    for (auto &iter : partons)
       vPartons.push_back(iter);
     auto ptsort = [](TGenParticle *p1, TGenParticle *p2) -> bool {
       return p1->pt > p2->pt;
@@ -642,12 +642,12 @@ void PerJetLoader::fillVJet(int iN,
     ///////
     ///look for resonances
     fSingletons["resonanceType"] = -1;
-    // start with top 
+    // start with top
     unsigned target = 6;
     for (unsigned iG = 0; iG != nG; ++iG) {
       TGenParticle *part = (TGenParticle*)((*fGens)[iG]);
       if (abs(part->pdgId) != target)
-        continue; 
+        continue;
       if (deltaR2(iObjects[i0]->eta, iObjects[i0]->phi, part->eta, part->phi) > dR2)
         continue;
 
@@ -658,10 +658,10 @@ void PerJetLoader::fillVJet(int iN,
           continue;
         switch (abs(child->pdgId)) {
           case 5:
-            pB = child; 
+            pB = child;
             break;
           case 24:
-            pW = child; 
+            pW = child;
             break;
         };
         if (pW && pB)
@@ -674,26 +674,26 @@ void PerJetLoader::fillVJet(int iN,
       for (unsigned jG = 0; jG != nG; ++jG) {
         TGenParticle *child = (TGenParticle*)((*fGens)[jG]);
         if (abs(child->pdgId) > 5)
-          continue; 
+          continue;
         if (child->parent < 0)
           continue;
 
-        bool foundW = false; 
-        // direct parent must be a W, but not necessarily the W directly from the t 
+        bool foundW = false;
+        // direct parent must be a W, but not necessarily the W directly from the t
         TGenParticle *parent = (TGenParticle*)((*fGens)[child->parent]);
         if (abs(parent->pdgId) != 24)
-          continue; 
+          continue;
 
         while (!foundW) {
           if (parent == pW) {
-            foundW = true; 
-            if (!pQ1) 
-              pQ1 = child; 
-            else 
+            foundW = true;
+            if (!pQ1)
+              pQ1 = child;
+            else
               pQ2 = child;
-          } 
+          }
           if (parent->parent < 0)
-            break; 
+            break;
           parent = (TGenParticle*)((*fGens)[parent->parent]);
         }
         if (pQ1 && pQ2)
@@ -701,22 +701,22 @@ void PerJetLoader::fillVJet(int iN,
       }
 
       if (!(pB && pW && pQ1 && pQ2))
-        continue; 
+        continue;
 
-      // now calculate the top size 
-      double size = 0; 
+      // now calculate the top size
+      double size = 0;
       for (auto *child : {pB, pQ1, pQ2}) {
         size = TMath::Max(size,
                           deltaR2(part->eta, part->phi, child->eta, child->phi));
       }
       if (size > 1.8 * dR2)
-        continue; 
+        continue;
 
       fSingletons["nResonanceProngs"] = 3;
       fSingletons["resonanceType"] = 4; // 0=q/g, 1=Z, 2=W, 3=H, 4=top
       fSingletons["decayType"] = 0;
     }
-  
+
     // first check for H
     if (fSingletons["resonanceType"] < 0) {
       unsigned target = 25;
@@ -742,7 +742,7 @@ void PerJetLoader::fillVJet(int iN,
             continue;
 	  if (abs(child->pdgId) == 25)
 	    continue;
-	 
+
           bool foundP = false;
           while (!foundP) {
             if (parent == part) {
@@ -807,7 +807,7 @@ void PerJetLoader::fillVJet(int iN,
 	  }
 	  if (!(pD1 && pD2 && pD3 && pD4))
 	    continue;
-	  
+
 	  // this is assuming certain order on decay which is not unreasonable thing to ask
 	  double size = 0, sizej = 0;
 	  double lepPt(0.), lepEta(0.), lepPhi(0.), lepId(0.);
@@ -886,7 +886,7 @@ void PerJetLoader::fillVJet(int iN,
 	    continue;
 	}
 	fSingletons["nResonanceProngs"] = 2;
-	fSingletons["resonanceType"] = 3; // 0=q/g, 1=Z, 2=W, 3=H, 4=top, 5=Z'                                                                                                             
+	fSingletons["resonanceType"] = 3; // 0=q/g, 1=Z, 2=W, 3=H, 4=top, 5=Z'
 	fSingletons["decayType"] = decay_id; // 1:u/d, 2:c/s, 3:b, 4:tautau, 5:gluglu, 6:ZZ, 7:WW (taus or non-mathed), 8:qqqq, 9:qqlv or lvqq
       }
     }
@@ -898,18 +898,18 @@ void PerJetLoader::fillVJet(int iN,
 
         auto found_target = std::find(targets.begin(),targets.end(),abs(part->pdgId));
         if (found_target == targets.end())
-          continue; 
+          continue;
         unsigned found_id = *found_target;
 
         if (deltaR2(iObjects[i0]->eta, iObjects[i0]->phi, part->eta, part->phi) > dR2)
           continue;
 
-        TGenParticle *pQ1 = 0, *pQ2 = 0; 
+        TGenParticle *pQ1 = 0, *pQ2 = 0;
 	unsigned decay_id = 0;
         for (unsigned jG = 0; jG != nG; ++jG) {
           TGenParticle *child = (TGenParticle*)((*fGens)[jG]);
-          if (abs(child->pdgId) > 5) 
-	    continue; 
+          if (abs(child->pdgId) > 5)
+	    continue;
           if (child->parent < 0)
             continue;
 
@@ -917,19 +917,19 @@ void PerJetLoader::fillVJet(int iN,
           TGenParticle *parent = (TGenParticle*)((*fGens)[child->parent]);
 
           if (abs(parent->pdgId) != found_id)
-            continue; 
+            continue;
 
           bool foundP = false;
           while (!foundP) {
             if (parent == part) {
-              foundP = true; 
-              if (!pQ1) 
-                pQ1 = child; 
-              else 
+              foundP = true;
+              if (!pQ1)
+                pQ1 = child;
+              else
                 pQ2 = child;
-            } 
+            }
             if (parent->parent < 0)
-              break; 
+              break;
             parent = (TGenParticle*)((*fGens)[parent->parent]);
           }
           if (pQ1 && pQ2)
@@ -937,7 +937,7 @@ void PerJetLoader::fillVJet(int iN,
         }
 
         if (!(pQ1 && pQ2)){
-          continue; 
+          continue;
 	}
 
 	fSingletons["decayId1_0"] = abs(pQ1->pdgId);
@@ -956,14 +956,14 @@ void PerJetLoader::fillVJet(int iN,
 	fSingletons["decayId2_3"] = abs(pD3->pdgId);
 	fSingletons["decayId2_4"] = abs(pD4->pdgId);
 
-        // now calculate the size 
-        double size = 0; 
+        // now calculate the size
+        double size = 0;
         for (auto *child : {pQ1, pQ2}) {
           size = TMath::Max(size,
                             deltaR2(part->eta, part->phi, child->eta, child->phi));
         }
         if (size > 1.8 * dR2){
-          continue; 
+          continue;
 	}
 
         fSingletons["nResonanceProngs"] = 2;
@@ -1019,7 +1019,7 @@ void PerJetLoader::fillVJet(int iN,
       for (auto &jh : ordered_jets) {
         jetPFs.push_back( (TPFPart*)(fPFs->At(jh.user_idx)) );
       }
-    } else { // pT sort 
+    } else { // pT sort
       for (auto idx : iObjects[i0]->pfCands) {
         jetPFs.push_back( (TPFPart*)(fPFs->At(idx)) );
       }
@@ -1030,49 +1030,49 @@ void PerJetLoader::fillVJet(int iN,
     int iCPF=0, iIPF=0;
     for (auto *pf : jetPFs) {
       if (pf->q && iCPF < NCPF) { // charged PF
-        fCPFArrs["cpf_pt"][iCPF] = pf->pup * pf->pt / iObjects[i0]->pt; 
-        fCPFArrs["cpf_eta"][iCPF] = pf->eta - iObjects[i0]->eta; 
-        fCPFArrs["cpf_phi"][iCPF] =SignedDeltaPhi(pf->phi, iObjects[i0]->phi); 
-        fCPFArrs["cpf_m"][iCPF] = pf->m; 
-        fCPFArrs["cpf_e"][iCPF] = pf->e; 
-        fCPFArrs["cpf_q"][iCPF] = pf->q; 
-        fCPFArrs["cpf_pfType"][iCPF] = pf->pfType; 
-        fCPFArrs["cpf_vtxID"][iCPF] = pf->vtxId; 
-        fCPFArrs["cpf_trkChi2"][iCPF] = pf->trkChi2; 
-        fCPFArrs["cpf_pup"][iCPF] = pf->pup; 
-        fCPFArrs["cpf_vtxChi2"][iCPF] = pf->vtxChi2; 
-        fCPFArrs["cpf_ecalE"][iCPF] = pf->ecalE; 
-        fCPFArrs["cpf_hcalE"][iCPF] = pf->hcalE; 
-        fCPFArrs["cpf_d0"][iCPF] = pf->d0; 
-        fCPFArrs["cpf_dz"][iCPF] = pf->dz; 
-        fCPFArrs["cpf_d0Err"][iCPF] = pf->d0Err; 
-        fCPFArrs["cpf_dptdpt"][iCPF] = pf->dptdpt; 
-        fCPFArrs["cpf_detadeta"][iCPF] = pf->detadeta; 
-        fCPFArrs["cpf_dphidphi"][iCPF] = pf->dphidphi; 
-        fCPFArrs["cpf_dxydxy"][iCPF] = pf->dxydxy; 
-        fCPFArrs["cpf_dzdz"][iCPF] = pf->dzdz; 
-        fCPFArrs["cpf_dxydz"][iCPF] = pf->dxydz; 
-        fCPFArrs["cpf_dphidxy"][iCPF] = pf->dphidxy; 
-        fCPFArrs["cpf_dlambdadz"][iCPF] = pf->dlambdadz; 
+        fCPFArrs["cpf_pt"][iCPF] = pf->pup * pf->pt / iObjects[i0]->pt;
+        fCPFArrs["cpf_eta"][iCPF] = pf->eta - iObjects[i0]->eta;
+        fCPFArrs["cpf_phi"][iCPF] =SignedDeltaPhi(pf->phi, iObjects[i0]->phi);
+        fCPFArrs["cpf_m"][iCPF] = pf->m;
+        fCPFArrs["cpf_e"][iCPF] = pf->e;
+        fCPFArrs["cpf_q"][iCPF] = pf->q;
+        fCPFArrs["cpf_pfType"][iCPF] = pf->pfType;
+        fCPFArrs["cpf_vtxID"][iCPF] = pf->vtxId;
+        fCPFArrs["cpf_trkChi2"][iCPF] = pf->trkChi2;
+        fCPFArrs["cpf_pup"][iCPF] = pf->pup;
+        fCPFArrs["cpf_vtxChi2"][iCPF] = pf->vtxChi2;
+        fCPFArrs["cpf_ecalE"][iCPF] = pf->ecalE;
+        fCPFArrs["cpf_hcalE"][iCPF] = pf->hcalE;
+        fCPFArrs["cpf_d0"][iCPF] = pf->d0;
+        fCPFArrs["cpf_dz"][iCPF] = pf->dz;
+        fCPFArrs["cpf_d0Err"][iCPF] = pf->d0Err;
+        fCPFArrs["cpf_dptdpt"][iCPF] = pf->dptdpt;
+        fCPFArrs["cpf_detadeta"][iCPF] = pf->detadeta;
+        fCPFArrs["cpf_dphidphi"][iCPF] = pf->dphidphi;
+        fCPFArrs["cpf_dxydxy"][iCPF] = pf->dxydxy;
+        fCPFArrs["cpf_dzdz"][iCPF] = pf->dzdz;
+        fCPFArrs["cpf_dxydz"][iCPF] = pf->dxydz;
+        fCPFArrs["cpf_dphidxy"][iCPF] = pf->dphidxy;
+        fCPFArrs["cpf_dlambdadz"][iCPF] = pf->dlambdadz;
         iCPF++;
-      } 
+      }
       if (iIPF >= NIPF)
         continue;
-      fIPFArrs["ipf_pt"][iIPF] = pf->pup * pf->pt / iObjects[i0]->pt; 
-      fIPFArrs["ipf_eta"][iIPF] = pf->eta - iObjects[i0]->eta; 
-      fIPFArrs["ipf_phi"][iIPF] = SignedDeltaPhi(pf->phi, iObjects[i0]->phi); 
-      fIPFArrs["ipf_m"][iIPF] = pf->m; 
-      fIPFArrs["ipf_e"][iIPF] = pf->e; 
-      fIPFArrs["ipf_pfType"][iIPF] = pf->pfType; 
-      fIPFArrs["ipf_pup"][iIPF] = pf->pup; 
-      fIPFArrs["ipf_ecalE"][iIPF] = pf->ecalE; 
-      fIPFArrs["ipf_hcalE"][iIPF] = pf->hcalE; 
+      fIPFArrs["ipf_pt"][iIPF] = pf->pup * pf->pt / iObjects[i0]->pt;
+      fIPFArrs["ipf_eta"][iIPF] = pf->eta - iObjects[i0]->eta;
+      fIPFArrs["ipf_phi"][iIPF] = SignedDeltaPhi(pf->phi, iObjects[i0]->phi);
+      fIPFArrs["ipf_m"][iIPF] = pf->m;
+      fIPFArrs["ipf_e"][iIPF] = pf->e;
+      fIPFArrs["ipf_pfType"][iIPF] = pf->pfType;
+      fIPFArrs["ipf_pup"][iIPF] = pf->pup;
+      fIPFArrs["ipf_ecalE"][iIPF] = pf->ecalE;
+      fIPFArrs["ipf_hcalE"][iIPF] = pf->hcalE;
       iIPF++;
     }
     fN_cpf = std::min(iCPF, NCPF);
     fN_ipf = std::min(iIPF, NIPF);
 
-    // fill PF 
+    // fill PF
     std::vector<TSVtx*> jetSVs;
     for (auto idx : pAddJet->svtx) {
       jetSVs.push_back( (TSVtx*)(fSVs->At(idx)) );
@@ -1101,7 +1101,7 @@ void PerJetLoader::fillVJet(int iN,
       fSVArrs["sv_d3d"][iSV] = sv->sv_d3d;
       fSVArrs["sv_d3derr"][iSV] = sv->sv_d3derr;
       fSVArrs["sv_d3dsig"][iSV] = sv->sv_d3dsig;
-      fSVArrs["sv_enratio"][iSV] = sv->sv_enratio;      
+      fSVArrs["sv_enratio"][iSV] = sv->sv_enratio;
       iSV++;
     }
     fN_sv = std::min(iSV, NSV);
@@ -1116,7 +1116,7 @@ void PerJetLoader::fillVJet(int iN,
 
     if(jetCorrPtSmear <=  400 || pAddJet->mass_sd0 <= 10) continue;
 
-    fTree->Fill(); 
+    fTree->Fill();
 
   }
 }
@@ -1129,19 +1129,19 @@ void PerJetLoader::matchJet(std::vector<TLorentzVector> iJets1, TLorentzVector i
     if ((iJets1[i0].DeltaR(iJet2) < mindR) && (fabs(iJets1[i0].Pt()-iJet2.Pt())<0.35*fabs(iJet2.Pt()))) {
       nmatched++;
       iJet1 = iJets1[i0];
-      mindR= iJets1[i0].DeltaR(iJet2);  
+      mindR= iJets1[i0].DeltaR(iJet2);
     }
   }
 }
 
-TAddJet *PerJetLoader::getAddJet(TJet *iJet) { 
+TAddJet *PerJetLoader::getAddJet(TJet *iJet) {
   int lIndex = -1;
-  TAddJet *lJet = 0; 
-  for(int i0 = 0; i0 < fVJets->GetEntriesFast(); i0++) { 
+  TAddJet *lJet = 0;
+  for(int i0 = 0; i0 < fVJets->GetEntriesFast(); i0++) {
     if((*fVJets)[i0] == iJet) { lIndex = i0; break;}
   }
   if(lIndex == -1) return 0;
-  for  (int i0 = 0; i0 < fVAddJets->GetEntriesFast(); i0++) { 
+  for  (int i0 = 0; i0 < fVAddJets->GetEntriesFast(); i0++) {
     TAddJet *pJet = (TAddJet*)((*fVAddJets)[i0]);
     if(pJet->index == fabs(lIndex)) { lJet = pJet; break;}
   }

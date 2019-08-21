@@ -11,7 +11,7 @@
 
 using namespace baconhep;
 
-class MuonLoader { 
+class MuonLoader {
 public:
   MuonLoader(TTree *iTree,std::string iLabel="2017");
   ~MuonLoader();
@@ -20,6 +20,10 @@ public:
   void setupTreeQbert(TTree *iTree);
   void load(int iEvent);
   void selectMuons(std::vector<TLorentzVector> &iMuons, float met, float metPhi);
+  //dimuon functions
+  void resetDiMu();
+  void selectDiMuon(std::vector<TLorentzVector> &iVetoes);
+  bool passJEC(TMuon *iMuon);
   std::vector<TMuon*> fLooseMuons, fMediumMuons, fTightMuons, fHighPtMuons;
   std::vector<TLorentzVector> looseMuons, mediumMuons, tightMuons, highptMuons;
   int           fNMuonsLoose;
@@ -33,12 +37,17 @@ public:
 
   const double MUON_MASS = 0.105658369;
 
-protected: 
+  float fMassMin;
+  float fMassMax;
+
+protected:
   TClonesArray *fMuons;
   TBranch      *fMuonBr;
   TTree        *fTree;
   std::vector<double> fVars;
   int           fN;
   std::string   fYear;
+
+  TLorentzVector *fDiMuon;
 };
 #endif

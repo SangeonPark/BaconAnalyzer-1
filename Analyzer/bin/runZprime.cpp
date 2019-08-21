@@ -28,16 +28,16 @@
 #include <iostream>
 
 // Object Processors
-GenLoader       *fGen        = 0; 
-EvtLoader       *fEvt        = 0; 
-MuonLoader      *fMuon       = 0; 
-ElectronLoader  *fElectron   = 0; 
-TauLoader       *fTau        = 0; 
-PhotonLoader    *fPhoton     = 0; 
+GenLoader       *fGen        = 0;
+EvtLoader       *fEvt        = 0;
+MuonLoader      *fMuon       = 0;
+ElectronLoader  *fElectron   = 0;
+TauLoader       *fTau        = 0;
+PhotonLoader    *fPhoton     = 0;
 JetLoader       *fJet4       = 0;
 VJetLoader      *fVJet8      = 0;
 VJetLoader      *fVJet15     = 0;
-RunLumiRangeMap *fRangeMap   = 0; 
+RunLumiRangeMap *fRangeMap   = 0;
 
 TH1F *fHist                  = 0;
 
@@ -45,7 +45,7 @@ TH1F *fHist                  = 0;
 const int NUM_PDF_WEIGHTS = 60;
 
 // Load tree and return infile
-TTree* load(std::string iName) { 
+TTree* load(std::string iName) {
   TFile *lFile = TFile::Open(iName.c_str());
   TTree *lTree = (TTree*) lFile->FindObjectAny("Events");
   lTree->SetDirectory(0);
@@ -53,8 +53,8 @@ TTree* load(std::string iName) {
   return lTree;
 }
 
-// For Json 
-bool passEvent(unsigned int iRun,unsigned int iLumi) { 
+// For Json
+bool passEvent(unsigned int iRun,unsigned int iLumi) {
   RunLumiRangeMap::RunLumiPairType lRunLumi(iRun,iLumi);
   return fRangeMap->HasRunLumi(lRunLumi);
 }
@@ -86,22 +86,22 @@ int main( int argc, char **argv ) {
   bool isData;
   if(lOption.compare("data")!=0) isData = false;
   else isData = true;
-		
-  TFile *lInputFile = TFile::Open(lName.c_str());
-  TTree *lTree = (TTree*) lInputFile->FindObjectAny("Events");		   
 
-  // Declare Readers 
-  fEvt       = new EvtLoader     (lTree,lName);    
-  fMuon      = new MuonLoader    (lTree,lLabel);          
-  fElectron  = new ElectronLoader(lTree,lLabel);          
-  fTau       = new TauLoader     (lTree,lLabel);          
-  fPhoton    = new PhotonLoader  (lTree,lLabel);          
-  fJet4      = new JetLoader     (lTree, isData, lLabel);  
-  fVJet8     = new VJetLoader    (lTree,"AK8Puppi","AddAK8Puppi",3, isData, lLabel);  
+  TFile *lInputFile = TFile::Open(lName.c_str());
+  TTree *lTree = (TTree*) lInputFile->FindObjectAny("Events");
+
+  // Declare Readers
+  fEvt       = new EvtLoader     (lTree,lName);
+  fMuon      = new MuonLoader    (lTree,lLabel);
+  fElectron  = new ElectronLoader(lTree,lLabel);
+  fTau       = new TauLoader     (lTree,lLabel);
+  fPhoton    = new PhotonLoader  (lTree,lLabel);
+  fJet4      = new JetLoader     (lTree, isData, lLabel);
+  fVJet8     = new VJetLoader    (lTree,"AK8Puppi","AddAK8Puppi",3, isData, lLabel);
   fVJet15    = new VJetLoader    (lTree,"CA15Puppi","AddCA15Puppi",3, isData, lLabel);
   if(lOption.compare("data")!=0) {
     if(lOption.compare("ps")==0) fGen      = new GenLoader     (lTree,true);
-    else fGen      = new GenLoader     (lTree);                 
+    else fGen      = new GenLoader     (lTree);
   }
 
   TFile *lFile = TFile::Open(lOutput.c_str(),"RECREATE");
@@ -114,16 +114,16 @@ int main( int argc, char **argv ) {
   TH1F *Pu = new TH1F("Pu", "Pu", 100, 0, 100);
 
   // Setup Tree
-  fEvt      ->setupTree      (lOut); 
-  fVJet8    ->setupTree      (lOut,"AK8Puppijet"); 
+  fEvt      ->setupTree      (lOut);
+  fVJet8    ->setupTree      (lOut,"AK8Puppijet");
   fVJet8    ->setupTreeZprime(lOut,"AK8Puppijet");
   fVJet15   ->setupTree      (lOut,"CA15Puppijet");
   fVJet15   ->setupTreeZprime(lOut,"CA15Puppijet");
   fJet4     ->setupTree      (lOut,"AK4Puppijet");
-  fMuon     ->setupTree      (lOut); 
-  fElectron ->setupTree      (lOut); 
-  fTau      ->setupTree      (lOut); 
-  fPhoton   ->setupTree      (lOut); 
+  fMuon     ->setupTree      (lOut);
+  fElectron ->setupTree      (lOut);
+  fTau      ->setupTree      (lOut);
+  fPhoton   ->setupTree      (lOut);
   if(lOption.compare("data")!=0) {
     fGen ->setupTree (lOut);
     if(lOption.compare("ps")==0)   fGen->setPSWeights(lOut);
@@ -154,7 +154,7 @@ int main( int argc, char **argv ) {
       fGen->load(i0);
       lWeight = fGen->fWeight;
       passJson = 1;
-      Pu->Fill(fEvt->fPu); 
+      Pu->Fill(fEvt->fPu);
       if(lOption.compare("ps")==0) {
 	fGen->loadPSWeights(i0); fGen->fillPSWeights();
       }
@@ -179,7 +179,7 @@ int main( int argc, char **argv ) {
     // HT triggers
     fEvt ->addTrigger("HLT_PFHT800_v*");//pre-scaled in 2017
     fEvt ->addTrigger("HLT_PFHT900_v*");//pre-scaled in 2017
-    fEvt ->addTrigger("HLT_PFHT1050_v*")  ; 
+    fEvt ->addTrigger("HLT_PFHT1050_v*")  ;
     fEvt ->addTrigger("HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*");
     fEvt ->addTrigger("HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*");
     fEvt ->addTrigger("HLT_PFJet450_v*");
@@ -214,10 +214,10 @@ int main( int argc, char **argv ) {
     fEvt ->addTrigger("HLT_AK8PFJet330_TrimMass30_PFAK8BTagDeepCSV_p17_v*");
 
     fEvt      ->fillEvent(1,lWeight,passJson);
-    
+
     // Objects
     gErrorIgnoreLevel=kError;
-    std::vector<TLorentzVector> cleaningMuons, cleaningElectrons, cleaningPhotons; 
+    std::vector<TLorentzVector> cleaningMuons, cleaningElectrons, cleaningPhotons;
     fMuon     ->load(i0);
     fMuon     ->selectMuons(cleaningMuons,fEvt->fMet,fEvt->fMetPhi);
     fElectron ->load(i0);
@@ -226,17 +226,17 @@ int main( int argc, char **argv ) {
     fTau      ->selectTaus(cleaningElectrons, cleaningMuons);
     fPhoton   ->load(i0);
     fPhoton   ->selectPhotons(fEvt->fRho,cleaningElectrons,cleaningPhotons);
-        
+
     // CA15Puppi Jets
     fVJet15   ->load(i0);
     fVJet15   ->selectVJets(cleaningElectrons,cleaningMuons,cleaningPhotons,1.5,fEvt->fRho,fEvt->fRun);
-      
-    // AK8Puppi Jets    
+
+    // AK8Puppi Jets
     fVJet8    ->load(i0);
     fVJet8    ->selectVJets(cleaningElectrons,cleaningMuons,cleaningPhotons,0.8,fEvt->fRho,fEvt->fRun);
 
     // AK4Puppi Jets
-    fJet4     ->load(i0); 
+    fJet4     ->load(i0);
     fJet4     ->selectJets(cleaningElectrons,cleaningMuons,cleaningPhotons,fVJet8->selectedVJets,fEvt->fRho,fEvt->fRun);
 
     // TTbar, EWK and kFactor correction
@@ -269,7 +269,7 @@ int main( int argc, char **argv ) {
       fGen->fWeight *= ttbarPtWeight;
       fGen->saveTTbarType();
       iGen = 6;
-    }    
+    }
     if(lName.find("TT_")!=std::string::npos || lName.find("TTTo")!=std::string::npos){
       float ttbarPtWeight = fGen->computeTTbarCorr();
       fEvt->fevtWeight *= ttbarPtWeight;
@@ -299,7 +299,7 @@ int main( int argc, char **argv ) {
   }
   std::cout << neventstest << " out of " << lTree->GetEntriesFast() << std::endl;
   lFile->cd();
-  lOut->Write();  
+  lOut->Write();
   NEvents->Write();
   SumWeights->Write();
   Pu->Write();
