@@ -63,7 +63,7 @@ if __name__ == '__main__':
     if '_9X' in options.sample: year="2017"
     if '_10X' in options.sample: year="2018"
 
-    eosOutDir = '/store/user/lpchbb/cmantill/'
+    eosOutDir = '/store/user/lpcbacon/separk/'
     execPython = 'baconCondor.py'
     EOS = ''#eos root://cmseos.fnal.gov'
     optionsDataMc = {
