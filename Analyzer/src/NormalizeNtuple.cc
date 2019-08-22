@@ -24,7 +24,7 @@ std::string ParseCommandLine( int argc, char* argv[], std::string opt )
 	  if ( tmp.find( "--" ) != std::string::npos ) return "yes";
 	}
     }
-  
+
   return "";
 };
 
@@ -58,7 +58,7 @@ double getNormalizationWeight(string filename, string datasetName, double intLum
     cmsswPath = "";
   }
   cmsswPath = std::string(cmsswPathChar);
-  std::string xsecPath = cmsswPath + "/src/BaconAnalyzer/Analyzer/data/xSections.dat";
+  std::string xsecPath = cmsswPath + "/src/BaconAnalyzer-1/Analyzer/data/xSections.dat";
   SimpleTable xstab(xsecPath.c_str());
   double CrossSection = xstab.Get(datasetName.c_str());
   double Weight = CrossSection * intLumi / NEvents;
@@ -108,7 +108,7 @@ int main(int argc, char* argv[]) {
     bool doUnweight = false;
     if ( _doUnweight == "yes" ) doUnweight = true;
 
-    
+
     int randomSeed = 0;
     std::string _randomSeed = ParseCommandLine( argc, argv, "--seed=" );
     if (_randomSeed != "") randomSeed = atoi( _randomSeed.c_str());
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
 
             //create new normalized tree
             outputFile->cd();
-            TTree *normalizedTree = inputTree->CloneTree(0);  
+            TTree *normalizedTree = inputTree->CloneTree(0);
             cout << "Events in the ntuple: " << inputTree->GetEntries() << endl;
 
             //add weight branch
@@ -180,41 +180,41 @@ int main(int argc, char* argv[]) {
 	    }
 
             //store the weights
-            for (int n=0;n<inputTree->GetEntries();n++) { 
+            for (int n=0;n<inputTree->GetEntries();n++) {
 	      if (n%1000000==0) cout << "Processed Event " << n << "\n";
                 inputTree->GetEntry(n);
 
                 if(normalizationWeight >= 0){
 		  if (foundWeightBranch) {
 		    //if weight branch exists, then multiply the value stored by the normalizationWeight
-		    weight = inputweight * normalizationWeight;		    
+		    weight = inputweight * normalizationWeight;
 		  } else {
 		    //if the weight branch doesn't exist, use the normalizationWeight as the weight
 		    weight = normalizationWeight;
 		  }
-                } 
+                }
 
 		if (!doUnweight) {
 		  normalizedTree->Fill();
 		} else {
 		  double randomNum = random.Rndm();
 		  //cout << "random: " << randomNum << "\n";
-		  if (randomNum < (normalizationWeight)) {     
-		    //cout << normalizationWeight << " : " << 1 / (normalizationWeight) << " " << weight << " -> ";		    
+		  if (randomNum < (normalizationWeight)) {
+		    //cout << normalizationWeight << " : " << 1 / (normalizationWeight) << " " << weight << " -> ";
 		    weight = weight / (normalizationWeight);
 
 		    //apply some filter cuts
 		    TTreeFormula *formula = new TTreeFormula("SkimCutString", "MR>300 && Rsq>0.15", normalizedTree);
-		    bool passSkim = false;		
+		    bool passSkim = false;
 		    passSkim = formula->EvalInstance();
 		    delete formula;
 
 		    if (passSkim) {
-		      normalizedTree->Fill(); 
+		      normalizedTree->Fill();
 		    }
-		    
+
 		    //cout << weight << "\n";
-		  } 
+		  }
 		}
             }
 

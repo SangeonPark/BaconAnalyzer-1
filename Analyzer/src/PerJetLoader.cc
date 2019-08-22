@@ -1043,7 +1043,7 @@ void PerJetLoader::loadJECs(bool isData) {
     std::cout << "PerJetLoader: loading jet energy correction constants" << std::endl;
     // initialize
     loadCMSSWPath();
-    std::string jecPathname = cmsswPath + "/src/BaconAnalyzer/Analyzer/data/JEC/";
+    std::string jecPathname = cmsswPath + "/src/BaconAnalyzer-1/Analyzer/data/JEC/";
     correctionParameters = std::vector<std::vector<JetCorrectorParameters> >();
     JetCorrector = std::vector<FactorizedJetCorrector*>();
     jecUnc = std::vector<JetCorrectionUncertainty*>();
@@ -1095,7 +1095,7 @@ void PerJetLoader::loadJECs_Rereco(bool isData) {
     std::cout << "PerJetLoader: loading Rereco jet energy correction constants" << std::endl;
     // initialize
     loadCMSSWPath();
-    std::string jecPathname = cmsswPath + "/src/BaconAnalyzer/Analyzer/data/JEC/";
+    std::string jecPathname = cmsswPath + "/src/BaconAnalyzer-1/Analyzer/data/JEC/";
     correctionParameters = std::vector<std::vector<JetCorrectorParameters> >();
     JetCorrector = std::vector<FactorizedJetCorrector*>();
     jecUnc = std::vector<JetCorrectionUncertainty*>();

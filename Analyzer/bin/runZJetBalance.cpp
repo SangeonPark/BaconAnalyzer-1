@@ -90,7 +90,7 @@ int main( int argc, char **argv ) {
 
   // Declare Readers
   fEvt       = new EvtLoader     (lTree,lName);
-  fMuon      = new MuonLoader    (lTree,lLabel);
+  fMuon      = new MuonLoader    (lTree);
   fElectron  = new ElectronLoader(lTree);                                                   // fElectrons and fElectronBr, fN = 2
   fPhoton    = new PhotonLoader  (lTree);                                                   // fPhotons and fPhotonBr, fN = 1
   fVJet4     = new PerJetLoader  (lTree,"AK4Puppi","AddAK4Puppi","AK4CHS","AddAK4CHS",3, isData);

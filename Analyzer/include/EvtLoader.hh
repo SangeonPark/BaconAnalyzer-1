@@ -15,12 +15,12 @@
 
 using namespace baconhep;
 
-class EvtLoader { 
+class EvtLoader {
 public:
   EvtLoader(TTree *iTree,std::string iName,
-	    std::string iHLTFile="${CMSSW_BASE}/src/BaconAnalyzer/Analyzer/data/HLTFile_25ns",
-	    std::string iPUWeight="${CMSSW_BASE}/src/BaconAnalyzer/Analyzer/data/puWeights_8X.root");
-  ~EvtLoader(); 
+	    std::string iHLTFile="${CMSSW_BASE}/src/BaconAnalyzer-1/Analyzer/data/HLTFile_25ns",
+	    std::string iPUWeight="${CMSSW_BASE}/src/BaconAnalyzer-1/Analyzer/data/puWeights_8X.root");
+  ~EvtLoader();
   void reset();
   void setupTree  (TTree *iTree);
   void setupTreeQbert(TTree *iTree);
@@ -44,7 +44,7 @@ public:
 		   std::string iHist1,
 		   std::string iHist2,
 		   std::string iNLO,
-                   std::string ikfactor="${CMSSW_BASE}/src/BaconAnalyzer/Analyzer/data/kfactors.root");
+                   std::string ikfactor="${CMSSW_BASE}/src/BaconAnalyzer-1/Analyzer/data/kfactors.root");
 
   //Vars
   float fRho;
@@ -57,7 +57,7 @@ public:
   unsigned int fEvtV;
   unsigned int fLumi;
   unsigned int fPassJson;
-  
+
   float fPu;
 
   TEventInfo   *fEvt;
@@ -68,7 +68,7 @@ public:
   float fkfactorQCD,fkfactorEWK;
 
   int fNVtx;
-protected: 
+protected:
   TBranch      *fEvtBr;
 
   TClonesArray *fVertices;

@@ -1,6 +1,6 @@
 #include "../include/JECLoader.hh"
 #include <cmath>
-#include <iostream> 
+#include <iostream>
 
 #include <string>
 #include <sstream>
@@ -13,9 +13,9 @@ JECLoader::JECLoader(bool iData,std::string iLabel,std::string iJet) {
 
   loadJECs(iData,iLabel,iJet);
 }
-JECLoader::~JECLoader() { 
+JECLoader::~JECLoader() {
 }
-void JECLoader::reset() { 
+void JECLoader::reset() {
   isData = false;
   labelEra = "";
   jetType = "";
@@ -32,7 +32,7 @@ void JECLoader::loadJECs(bool iData,std::string iLabel,std::string iJet) {
   std::cout << "JECLoader: loading " << labelEra << " jet energy correction constants for "<< jetType << std::endl;
   // initialize
   loadCMSSWPath();
-  std::string jecPathname = cmsswPath + "/src/BaconAnalyzer/Analyzer/data/JEC/";
+  std::string jecPathname = cmsswPath + "/src/BaconAnalyzer-1/Analyzer/data/JEC/";
   correctionParameters = std::vector<std::vector<JetCorrectorParameters> >();
   JetCorrector = std::vector<FactorizedJetCorrector*>();
   jecUnc = std::vector<JetCorrectionUncertainty*>();
@@ -277,19 +277,19 @@ double JECLoader::JetEnergyCorrectionFactor( double jetRawPt, double jetEta, dou
     std::cout << "Warning: run = " << run << " was not found in any valid IOV range. use default index = 0 for Jet energy corrections. \n";
     foundIndex = 0;
   }
-  
+
   if (!JetCorrector[foundIndex]) {
     std::cout << "WWARNING: Jet corrector pointer is null. Returning JEC = 0. \n";
     return 0;
   }
-  
+
   JetCorrector[foundIndex]->setJetEta(jetEta);
   JetCorrector[foundIndex]->setJetPt(jetRawPt);
   JetCorrector[foundIndex]->setJetPhi(jetPhi);
   JetCorrector[foundIndex]->setJetE(jetE);
   JetCorrector[foundIndex]->setRho(rho);
   JetCorrector[foundIndex]->setJetA(jetArea);
-  
+
   std::vector<float> corrections;
   corrections = JetCorrector[foundIndex]->getSubCorrections();
 
@@ -306,8 +306,7 @@ double JECLoader::JetEnergyCorrectionFactor( double jetRawPt, double jetEta, dou
     if (printDebug) std::cout << "Correction Level " << j << " : current correction = " << currentCorrection << " , cumulative correction = " << cumulativeCorrection << "\n";
   }
   if (printDebug) std::cout << "Final Cumulative Correction: " << cumulativeCorrection << "\n";
-  
+
   return cumulativeCorrection;
 
 }
-
