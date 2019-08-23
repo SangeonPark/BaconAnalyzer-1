@@ -43,7 +43,7 @@ PerJetLoader::PerJetLoader(TTree *iTree,std::string iJet,std::string iAddJet,std
 
   isData = iData;
   fYear=iLabel;
-  fJEC = new JECLoader(iData,iLabel,"AK8PFPuppi");
+  fJEC = new JECLoader(iData,iLabel,"AK4PFPuppi");
   r = new TRandom3(1993);
 
   const std::string cmssw_base = getenv("CMSSW_BASE");
