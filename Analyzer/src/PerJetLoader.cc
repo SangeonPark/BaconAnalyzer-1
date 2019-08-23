@@ -955,6 +955,7 @@ void PerJetLoader::fillVJet(int iN,
     fN_ipf = std::min(iIPF, NIPF);
 
     // fill PF
+    /*
     std::vector<TSVtx*> jetSVs;
     for (auto idx : pAddJet->svtx) {
       jetSVs.push_back( (TSVtx*)(fSVs->At(idx)) );
@@ -987,6 +988,7 @@ void PerJetLoader::fillVJet(int iN,
       iSV++;
     }
     fN_sv = std::min(iSV, NSV);
+    */
 
     fpartonFlavor   = iObjects[0]->partonFlavor;
     fhadronFlavor   = iObjects[0]->hadronFlavor;
