@@ -91,8 +91,6 @@ void PerJetLoader::reset() {
   selectedVJets.clear();
   fLooseVJets.clear();
   x1List.clear();
-  x2List.clear();
-  x3List.clear();
   for (auto &iter : fSingletons) {
     fSingletons[iter.first] = 0;
   }
