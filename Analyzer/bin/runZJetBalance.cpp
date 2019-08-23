@@ -160,6 +160,7 @@ int main( int argc, char **argv ) {
     SumWeights->Fill(1.0, lWeight);
 
     // Primary vertex requirement
+    std::cout << fEvt->PV() << std::endl;
     if(!fEvt->PV()) continue;
 
     // Trigger
