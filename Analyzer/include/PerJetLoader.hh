@@ -16,6 +16,7 @@
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
+#include "JECLoader.hh"
 
 #include "fastjet/PseudoJet.hh"
 #include "fastjet/JetDefinition.hh"
