@@ -62,21 +62,7 @@ public:
   const double CSVL = 0.5426; // CSVv2SubJet WP
   const double CSVM = 0.8484;
   // JEC tools
-  std::vector<FactorizedJetCorrector*> getJetCorrector() { return JetCorrector; }
-  std::vector<std::pair<int,int> > getJetCorrectionsIOV() { return JetCorrectionsIOV; }
-  double getJecUnc( float pt, float eta, int run );
-  double JetEnergyCorrectionFactor( double jetRawPt, double jetEta, double jetPhi, double jetE,
-				    double rho, double jetArea,
-				    int run,
-				    std::vector<std::pair<int,int> > JetCorrectionsIOV,
-				    std::vector<FactorizedJetCorrector*> jetcorrector,
-				    int jetCorrectionLevel = -1,
-				    bool printDebug = false);
-  double JetEnergyCorrectionFactor( double jetRawPt, double jetEta, double jetPhi, double jetE,
-				    double rho, double jetArea,
-				    FactorizedJetCorrector* jetcorrector,
-				    int jetCorrectionLevel = -1,
-				    bool printDebug = false);
+
   TRandom3* r;
 
   bool aktSort = true;
