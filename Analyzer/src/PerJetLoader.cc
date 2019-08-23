@@ -522,14 +522,14 @@ void PerJetLoader::fillVJet(int iN,
     fSingletons["CHF"]  = iObjects[i0]->chHadFrac;
     fSingletons["NHF"]  = iObjects[i0]->neuHadFrac;
     fSingletons["NEMF"]  = iObjects[i0]->neuEmFrac;
-    fSingletons["tau21"]  = (pAddJet->tau2/pAddJet->tau1);
-    fSingletons["tau32"]  = (pAddJet->tau3/pAddJet->tau2);
-    fSingletons["msd"]  = pAddJet->mass_sd0;
-    fSingletons["rho"]  = log((pAddJet->mass_sd0*pAddJet->mass_sd0)/iObjects[i0]->pt);
-    fSingletons["minsubscv"]  = TMath::Min(pAddJet->sj1_csv,pAddJet->sj2_csv);
-    fSingletons["maxsubscv"] = TMath::Max(TMath::Max(pAddJet->sj1_csv,pAddJet->sj2_csv),TMath::Max(pAddJet->sj3_csv,pAddJet->sj4_csv));
-    fSingletons["doublecsv"] = pAddJet->doublecsv;
-    fSingletons["doublesub"] = pAddJet->Double_sub;
+    //fSingletons["tau21"]  = (pAddJet->tau2/pAddJet->tau1);
+    //fSingletons["tau32"]  = (pAddJet->tau3/pAddJet->tau2);
+    //fSingletons["msd"]  = pAddJet->mass_sd0;
+    //fSingletons["rho"]  = log((pAddJet->mass_sd0*pAddJet->mass_sd0)/iObjects[i0]->pt);
+    //fSingletons["minsubscv"]  = TMath::Min(pAddJet->sj1_csv,pAddJet->sj2_csv);
+    //fSingletons["maxsubscv"] = TMath::Max(TMath::Max(pAddJet->sj1_csv,pAddJet->sj2_csv),TMath::Max(pAddJet->sj3_csv,pAddJet->sj4_csv));
+    //fSingletons["doublecsv"] = pAddJet->doublecsv;
+    //fSingletons["doublesub"] = pAddJet->Double_sub;
     fSingletons["ptraw"] = iObjects[i0]->ptRaw;
     fSingletons["genpt"] = iObjects[i0]->genpt;
     /*
