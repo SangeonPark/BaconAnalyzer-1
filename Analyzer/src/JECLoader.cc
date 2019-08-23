@@ -32,7 +32,7 @@ void JECLoader::loadJECs(bool iData,std::string iLabel,std::string iJet) {
   std::cout << "JECLoader: loading " << labelEra << " jet energy correction constants for "<< jetType << std::endl;
   // initialize
   loadCMSSWPath();
-  std::string jecPathname = cmsswPath + "/src/BaconAnalyzer-1/Analyzer/data/JEC/";
+  std::string jecPathname = cmsswPath + "/src/BaconAnalyzer-1/Analyzer/data/JEC";
   correctionParameters = std::vector<std::vector<JetCorrectorParameters> >();
   JetCorrector = std::vector<FactorizedJetCorrector*>();
   jecUnc = std::vector<JetCorrectionUncertainty*>();
