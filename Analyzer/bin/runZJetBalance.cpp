@@ -136,6 +136,7 @@ int main( int argc, char **argv ) {
   std::cout << minEvent << " min event ";
   std::cout << maxEvent << " max event " << std::endl;
   for(int i0 = minEvent; i0 < maxEvent; i0++) {
+    std::cout << neventstest << std::endl;
     if(neventstest==0) std::cout << "first iteration " << std::endl;
     if (i0%10000 == 0) std::cout << i0 << " events processed " << std::endl;
 
