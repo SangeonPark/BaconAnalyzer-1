@@ -93,7 +93,7 @@ int main( int argc, char **argv ) {
   fMuon      = new MuonLoader    (lTree);
   fElectron  = new ElectronLoader(lTree);                                                   // fElectrons and fElectronBr, fN = 2
   fPhoton    = new PhotonLoader  (lTree);                                                   // fPhotons and fPhotonBr, fN = 1
-  fVJet4     = new PerJetLoader  (lTree,"AK4Puppi","AddAK4Puppi","AK4CHS","AddAK4CHS",3, isData);
+  fVJet4     = new PerJetLoader  (lTree,"AK4Puppi","AddAK4Puppi","AK4CHS","AddAK4CHS",3, isData,lLabel);
 
   if(lOption.compare("data")!=0) {
     if(lOption.compare("ps")==0) fGen      = new GenLoader     (lTree,true);
