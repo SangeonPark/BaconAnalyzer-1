@@ -67,8 +67,11 @@ if __name__ == '__main__':
     execPython = 'baconCondor.py'
     EOS = ''#eos root://cmseos.fnal.gov'
     optionsDataMc = {
-        'rereco16': "-a 2:Output.json -a 3:0 -a 4:1 -a 5:data -a 6:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(year,options.njobs_per_file,options.nfiles_per_job),
-        'mc': "-a 5:Output.json -a 6:0 -a 7:1 -a 2:mc -a 3:%s -a 4:none -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(year,options.njobs_per_file,options.nfiles_per_job),
+        'rereco16': "-a 5:Output.root -a 6:subjob_i -a 7:%i -a 2:data -a 3:%s -a 4:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(options.njobs_per_file,year,jsonRereco16,options.njobs_per_file,options.nfiles_per_job),
+        'prompt17': "-a 5:Output.root -a 6:subjob_i -a 7:%i -a 2:data -a 3:%s -a 4:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(options.njobs_per_file,year,jsonPrompt17,options.njobs_per_file,options.nfiles_per_job),
+        'rereco17': "-a 5:Output.root -a 6:subjob_i -a 7:%i -a 2:data -a 3:%s -a 4:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(options.njobs_per_file,year,jsonRereco17,options.njobs_per_file,options.nfiles_per_job),
+        'prompt18': "-a 5:Output.root -a 6:subjob_i -a 7:%i -a 2:data -a 3:%s -a 4:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(options.njobs_per_file,year,jsonPrompt18,options.njobs_per_file,options.nfiles_per_job),
+        'mc': "-a 5:Output.root -a 6:subjob_i -a 7:%i -a 2:mc -a 3:%s -a 4:none -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(options.njobs_per_file,year,options.njobs_per_file,options.nfiles_per_job),
         }
 
     exec_me('%s mkdir -p /eos/uscms/%s/%s'%(EOS,eosOutDir,analysisDir))
@@ -79,9 +82,12 @@ if __name__ == '__main__':
                 labelOut = labelOut.replace('_PS','')
         elif '_8X' in options.sample:
             labelOut = label.replace('_8X','')
+            if '_withPF' in options.sample:
+                labelOut = label.replace('_withPF','')
+        elif '_9X' in options.sample:
+            labelOut = label.replace('_9X','')
         else:
             labelOut = label
-        print 'labelout ',labelOut
         exec_me('%s mkdir -p /eos/uscms/%s/%s/%s'%(EOS,eosOutDir,analysisDir,labelOut))
         listLabel = '../lists/production%s/%s.txt'%(options.production,label)
         exec_me("python %s %s %s --list 1:%s --outdir $PWD/../%s/%s_%s --eosoutdir %s/%s/%s %s"%(execPython,executable,optionsDataMc[isMc],listLabel,analysisDir,label,isMc,eosOutDir,analysisDir,labelOut,monitorOption),options.dryRun)
