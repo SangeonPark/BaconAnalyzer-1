@@ -70,14 +70,16 @@ PerJetLoader::~PerJetLoader() {
   delete fPFBr;
   delete fSVs;
   delete fSVBr;
-  for (auto &iter : fCPFArrs)
+  for(int j=0; j<fN; j++){
+  for (auto &iter : fCPFArrs[j])
     delete iter.second;
-  for (auto &iter : fIPFArrs)
+  for (auto &iter : fIPFArrs[j])
     delete iter.second;
-  for (auto &iter : fSVArrs)
+  for (auto &iter : fSVArrs[j])
     delete iter.second;
-  for (auto &iter : fPartArrs)
+  for (auto &iter : fPartArrs[j])
     delete iter.second;
+  }
   delete activeArea;
   delete areaDef;
   delete jetDef;
@@ -351,7 +353,7 @@ void PerJetLoader::setupTree(TTree *iTree, std::string iJetLabel) {
       bname2 << bname.str() << "[" << NSV << "]/F";
       fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
     }*/
-    std::stringstream bname_part
+    std::stringstream bname_part;
     bname_part << iJetLabel << j << "_" << "n_part";
     fTree->Branch(bname_part.str().c_str(),&fN_part[j],(bname_part.str()+"/I").c_str());
     for (auto &iter : fPartArrs[j]) {
@@ -725,10 +727,10 @@ void PerJetLoader::fillVJet(int iN,
       vTmp.SetPtEtaPhiM(part->pt, part->eta, part->phi, part->mass);
       vPartonSum += vTmp;
     }
-    fSingletons[i]["partonPt"] = vPartonSum.Pt();
-    fSingletons[i]["partonEta"] = vPartonSum.Eta();
-    fSingletons[i]["partonPhi"] = vPartonSum.Phi();
-    fSingletons[i]["partonM"] = vPartonSum.M();
+    fSingletons[i0]["partonPt"] = vPartonSum.Pt();
+    fSingletons[i0]["partonEta"] = vPartonSum.Eta();
+    fSingletons[i0]["partonPhi"] = vPartonSum.Phi();
+    fSingletons[i0]["partonM"] = vPartonSum.M();
 
     ///////
     ///look for resonances
