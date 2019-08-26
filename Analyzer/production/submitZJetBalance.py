@@ -32,7 +32,7 @@ if __name__ == '__main__':
                       help="samples to produce")
     parser.add_option('-e','--executable',dest="executable", default="runZJetBalance",
                       help = "executable name")
-    parser.add_option('-t','--tag',dest="tag", default = "sepbits-v16.02",
+    parser.add_option('-t','--tag',dest="tag", default = "sepbits-v16.03",
                       help = "tag, which is the same as folder")
     parser.add_option('--production',dest="production", default = "16",
                       help="bacon production")
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     EOS = ''#eos root://cmseos.fnal.gov'
     optionsDataMc = {
         'rereco16': "-a 2:Output.json -a 3:0 -a 4:1 -a 5:data -a 6:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(year,options.njobs_per_file,options.nfiles_per_job),
-        'mc': "-a 2:Output.json -a 3:0 -a 4:1 -a 5:mc -a 6:%s -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(year,options.njobs_per_file,options.nfiles_per_job),
+        'mc': "-a 5:Output.json -a 6:0 -a 7:1 -a 2:mc -a 3:%s -a 4:none -n 8000 --njobs-per-file %d --nfiles-per-job %d"%(year,options.njobs_per_file,options.nfiles_per_job),
         }
 
     exec_me('%s mkdir -p /eos/uscms/%s/%s'%(EOS,eosOutDir,analysisDir))
