@@ -32,7 +32,7 @@ if __name__ == '__main__':
                       help="samples to produce")
     parser.add_option('-e','--executable',dest="executable", default="runZJetBalance",
                       help = "executable name")
-    parser.add_option('-t','--tag',dest="tag", default = "sepbits-v16.01",
+    parser.add_option('-t','--tag',dest="tag", default = "sepbits-v16.02",
                       help = "tag, which is the same as folder")
     parser.add_option('--production',dest="production", default = "16",
                       help="bacon production")
