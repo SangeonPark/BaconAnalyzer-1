@@ -99,9 +99,9 @@ protected:
   int           fNTightVJets, fNTightVJetsCHS;
   int           fNProngs;
 
-  std::map<std::string,float> fSingletons;
-  int fN_cpf, fN_ipf, fN_sv, fN_part;
-	std::map<std::string,float*> fCPFArrs, fIPFArrs, fSVArrs, fPartArrs;
+  std::map<std::string,float> fSingletons[5];
+  int fN_cpf[5], fN_ipf[5], fN_sv[5], fN_part[5];
+	std::map<std::string,float*> fCPFArrs[5], fIPFArrs[5], fSVArrs[5], fPartArrs[5];
   std::vector<std::string> fTrigString;
 
   int           fN;

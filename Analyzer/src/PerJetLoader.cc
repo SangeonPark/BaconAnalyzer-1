@@ -91,25 +91,27 @@ void PerJetLoader::reset() {
   selectedVJets.clear();
   fLooseVJets.clear();
   x1List.clear();
-  for (auto &iter : fSingletons) {
-    fSingletons[iter.first] = 0;
-  }
-  fN_cpf = 0; fN_ipf = 0; fN_sv = 0;
-  for (auto &iter : fCPFArrs) {
-    for (unsigned i = 0; i != NCPF; ++i)
-      fCPFArrs[iter.first][i] = 0;
-  }
-  for (auto &iter : fIPFArrs) {
-    for (unsigned i = 0; i != NIPF; ++i)
-      fIPFArrs[iter.first][i] = 0;
-  }
-  for (auto &iter : fSVArrs) {
-    for (unsigned i = 0; i != NSV; ++i)
-      fSVArrs[iter.first][i] = 0;
-  }
-  for (auto &iter : fPartArrs) {
-    for (unsigned i = 0; i != NPART; ++i)
-      fPartArrs[iter.first][i] = 0;
+  for (int j = 0; j < fN; j++) {
+    for (auto &iter : fSingletons[j]) {
+      fSingletons[j][iter.first] = 0;
+    }
+    fN_cpf[j] = 0; fN_ipf[j] = 0; fN_sv[j] = 0;
+    for (auto &iter : fCPFArrs[j]) {
+      for (unsigned i = 0; i != NCPF; ++i)
+        fCPFArrs[j][iter.first][i] = 0;
+    }
+    for (auto &iter : fIPFArrs[j]) {
+      for (unsigned i = 0; i != NIPF; ++i)
+        fIPFArrs[j][iter.first][i] = 0;
+    }
+    for (auto &iter : fSVArrs[j]) {
+      for (unsigned i = 0; i != NSV; ++i)
+        fSVArrs[j][iter.first][i] = 0;
+    }
+    for (auto &iter : fPartArrs[j]) {
+      for (unsigned i = 0; i != NPART; ++i)
+        fPartArrs[j][iter.first][i] = 0;
+    }
   }
   resetZprime();
 }
@@ -123,232 +125,242 @@ void PerJetLoader::resetZprime() {
 void PerJetLoader::setupTree(TTree *iTree, std::string iJetLabel) {
   reset();
 
-  fSingletons.clear();
-  fCPFArrs.clear();
-  fIPFArrs.clear();
-  fSVArrs.clear();
-  fPartArrs.clear();
+  for(int j=0; j < fN; j++){
+    fSingletons[j].clear();
+    fCPFArrs[j].clear();
+    fIPFArrs[j].clear();
+    fSVArrs[j].clear();
+    fPartArrs[j].clear();
 
-  fSingletons["pt"] = 0;
-  fSingletons["eta"] = 0;
-  fSingletons["phi"] = 0;
-  fSingletons["mass"] = 0;
-  fSingletons["csv"] = 0;
-  fSingletons["CHF"] = 0;
-  fSingletons["NHF"] = 0;
-  fSingletons["NEMF"] = 0;
-  fSingletons["tau21"] = 0;
-  fSingletons["tau32"] = 0;
-  fSingletons["msd"] = 0;
-  fSingletons["rho"] = 0;
-  fSingletons["minsubcsv"] = 0;
-  fSingletons["maxsubcsv"] = 0;
-  fSingletons["doublecsv"] = 0;
-  fSingletons["doublesub"] = 0;
-  fSingletons["ptraw"] = 0;
-  fSingletons["genpt"] = 0;
-  fSingletons["e2_b1"] = 0; // Correlation function inputs beta=1
-  fSingletons["e3_b1"] = 0;
-  fSingletons["e3_v1_b1"] = 0;
-  fSingletons["e3_v2_b1"] = 0;
-  fSingletons["e4_v1_b1"] = 0;
-  fSingletons["e4_v2_b1"] = 0;
-  fSingletons["e2_b2"] = 0; // Correlation function inputs beta=2
-  fSingletons["e3_b2"] = 0;
-  fSingletons["e3_v1_b2"] = 0;
-  fSingletons["e3_v2_b2"] = 0;
-  fSingletons["e4_v1_b2"] = 0;
-  fSingletons["e4_v2_b2"] = 0;
-  fSingletons["e2_sdb1"] = 0; // Correlation function inputs beta=1 soft-dropped
-  fSingletons["e3_sdb1"] = 0;
-  fSingletons["e3_v1_sdb1"] = 0;
-  fSingletons["e3_v2_sdb1"] = 0;
-  fSingletons["e4_v1_sdb1"] = 0;
-  fSingletons["e4_v2_sdb1"] = 0;
-  fSingletons["e2_sdb2"] = 0; // Correlation function inputs beta=2 soft-dropped
-  fSingletons["e3_sdb2"] = 0;
-  fSingletons["e3_v1_sdb2"] = 0;
-  fSingletons["e3_v2_sdb2"] = 0;
-  fSingletons["e4_v1_sdb2"] = 0;
-  fSingletons["e4_v2_sdb2"] = 0;
-  fSingletons["N2sdb1"] = 0; // 2-prong ECFs observables
-  fSingletons["N2sdb2"] = 0;
-  fSingletons["M2sdb1"] = 0;
-  fSingletons["M2sdb2"] = 0;
-  fSingletons["D2sdb1"] = 0;
-  fSingletons["D2sdb2"] = 0;
-  fSingletons["N2b1"] = 0;
-  fSingletons["N2b2"] = 0;
-  fSingletons["M2b1"] = 0;
-  fSingletons["M2b2"] = 0;
-  fSingletons["D2b1"] = 0;
-  fSingletons["D2b2"] = 0;
-  fSingletons["pt_old"] = 0;
-  fSingletons["pt_JESUp"] = 0;
-  fSingletons["pt_JESDown"] = 0;
-  fSingletons["pt_JERUp"] = 0;
-  fSingletons["pt_JERDown"] = 0;
-  fSingletons["e2_sdb05"] = 0; // Correlation function inputs beta=0.5 soft-dropped
-  fSingletons["e3_sdb05"] = 0;
-  fSingletons["e3_v1_sdb05"] = 0;
-  fSingletons["e3_v2_sdb05"] = 0;
-  fSingletons["e4_v1_sdb05"] = 0;
-  fSingletons["e4_v2_sdb05"] = 0;
-  fSingletons["e2_sdb4"] = 0; // Correlation function inputs beta=4 soft-dropped
-  fSingletons["e3_sdb4"] = 0;
-  fSingletons["e3_v1_sdb4"] = 0;
-  fSingletons["e3_v2_sdb4"] = 0;
-  fSingletons["e4_v1_sdb4"] = 0;
-  fSingletons["e4_v2_sdb4"] = 0;
-  fSingletons["flavour"] = 0;
-  fSingletons["nbHadrons"] = 0;
-  fSingletons["nSV"] = 0;
-  fSingletons["jetNTracks"] = 0;
-  fSingletons["tau_flightDistance2dSig_1"] = 0;
-  fSingletons["SubJet_csv"] = 0;
-  fSingletons["z_ratio"] = 0;
-  fSingletons["trackSipdSig_3"] = 0;
-  fSingletons["trackSipdSig_2"] = 0;
-  fSingletons["trackSipdSig_1"] = 0;
-  fSingletons["trackSipdSig_0"] = 0;
-  fSingletons["trackSipdSig_1_0"] = 0;
-  fSingletons["trackSipdSig_0_0"] = 0;
-  fSingletons["trackSipdSig_1_1"] = 0;
-  fSingletons["trackSipdSig_0_1"] = 0;
-  fSingletons["trackSip2dSigAboveCharm_0"] = 0;
-  fSingletons["trackSip2dSigAboveBottom_0"] = 0;
-  fSingletons["trackSip2dSigAboveBottom_1"] = 0;
-  fSingletons["tau1_trackEtaRel_0"] = 0;
-  fSingletons["tau1_trackEtaRel_1"] = 0;
-  fSingletons["tau1_trackEtaRel_2"] = 0;
-  fSingletons["tau0_trackEtaRel_0"] = 0;
-  fSingletons["tau0_trackEtaRel_1"] = 0;
-  fSingletons["tau0_trackEtaRel_2"] = 0;
-  fSingletons["tau_vertexMass_0"] = 0;
-  fSingletons["tau_vertexEnergyRatio_0"] = 0;
-  fSingletons["tau_vertexDeltaR_0"] = 0;
-  fSingletons["tau_flightDistance2dSig_0"] = 0;
-  fSingletons["tau_vertexMass_1"] = 0;
-  fSingletons["tau_vertexEnergyRatio_1"] = 0;
-  fSingletons["nProngs"] = 0;
-  fSingletons["nResonanceProngs"] = 0;
-  fSingletons["resonanceType"] = -1;
-  fSingletons["nB"] = 0;
-  fSingletons["nC"] = 0;
-  fSingletons["partonPt"] = 0;
-  fSingletons["partonEta"] = 0;
-  fSingletons["partonPhi"] = 0;
-  fSingletons["partonM"] = 0;
+    fSingletons[j]["pt"] = 0;
+    fSingletons[j]["eta"] = 0;
+    fSingletons[j]["phi"] = 0;
+    fSingletons[j]["mass"] = 0;
+    fSingletons[j]["csv"] = 0;
+    fSingletons[j]["CHF"] = 0;
+    fSingletons[j]["NHF"] = 0;
+    fSingletons[j]["NEMF"] = 0;
+    //fSingletons["tau21"] = 0;
+    //fSingletons["tau32"] = 0;
+    //fSingletons[j]["msd"] = 0;
+    //fSingletons[j]["rho"] = 0;
+    //fSingletons["minsubcsv"] = 0;
+    //fSingletons["maxsubcsv"] = 0;
+    //fSingletons["doublecsv"] = 0;
+    //fSingletons["doublesub"] = 0;
+    fSingletons[j]["ptraw"] = 0;
+    fSingletons[j]["genpt"] = 0;
+    //fSingletons["e2_b1"] = 0; // Correlation function inputs beta=1
+    //fSingletons["e3_b1"] = 0;
+    //fSingletons["e3_v1_b1"] = 0;
+    //fSingletons["e3_v2_b1"] = 0;
+    //fSingletons["e4_v1_b1"] = 0;
+    //fSingletons["e4_v2_b1"] = 0;
+    //fSingletons["e2_b2"] = 0; // Correlation function inputs beta=2
+    //fSingletons["e3_b2"] = 0;
+    //fSingletons["e3_v1_b2"] = 0;
+    //fSingletons["e3_v2_b2"] = 0;
+    //fSingletons["e4_v1_b2"] = 0;
+    //fSingletons["e4_v2_b2"] = 0;
+    //fSingletons["e2_sdb1"] = 0; // Correlation function inputs beta=1 soft-dropped
+    //fSingletons["e3_sdb1"] = 0;
+    //fSingletons["e3_v1_sdb1"] = 0;
+    //fSingletons["e3_v2_sdb1"] = 0;
+    //fSingletons["e4_v1_sdb1"] = 0;
+    //fSingletons["e4_v2_sdb1"] = 0;
+    //fSingletons["e2_sdb2"] = 0; // Correlation function inputs beta=2 soft-dropped
+    //fSingletons["e3_sdb2"] = 0;
+    //fSingletons["e3_v1_sdb2"] = 0;
+    //fSingletons["e3_v2_sdb2"] = 0;
+    //fSingletons["e4_v1_sdb2"] = 0;
+    //fSingletons["e4_v2_sdb2"] = 0;
+    //fSingletons["N2sdb1"] = 0; // 2-prong ECFs observables
+    //fSingletons["N2sdb2"] = 0;
+    //fSingletons["M2sdb1"] = 0;
+    //fSingletons["M2sdb2"] = 0;
+    //fSingletons["D2sdb1"] = 0;
+    //fSingletons["D2sdb2"] = 0;
+    //fSingletons["N2b1"] = 0;
+    //fSingletons["N2b2"] = 0;
+    //fSingletons["M2b1"] = 0;
+    //fSingletons["M2b2"] = 0;
+    //fSingletons["D2b1"] = 0;
+    //fSingletons["D2b2"] = 0;
+    fSingletons[j]["pt_old"] = 0;
+    fSingletons[j]["pt_JESUp"] = 0;
+    fSingletons[j]["pt_JESDown"] = 0;
+    fSingletons[j]["pt_JERUp"] = 0;
+    fSingletons[j]["pt_JERDown"] = 0;
+    //fSingletons["e2_sdb05"] = 0; // Correlation function inputs beta=0.5 soft-dropped
+    //fSingletons["e3_sdb05"] = 0;
+    //fSingletons["e3_v1_sdb05"] = 0;
+    //fSingletons["e3_v2_sdb05"] = 0;
+    //fSingletons["e4_v1_sdb05"] = 0;
+    //fSingletons["e4_v2_sdb05"] = 0;
+    //fSingletons["e2_sdb4"] = 0; // Correlation function inputs beta=4 soft-dropped
+    //fSingletons["e3_sdb4"] = 0;
+    //fSingletons["e3_v1_sdb4"] = 0;
+    //fSingletons["e3_v2_sdb4"] = 0;
+    //fSingletons["e4_v1_sdb4"] = 0;
+    //fSingletons["e4_v2_sdb4"] = 0;
+    //fSingletons["flavour"] = 0;
+    //fSingletons["nbHadrons"] = 0;
+    //fSingletons["nSV"] = 0;
+    //fSingletons["jetNTracks"] = 0;
+    //fSingletons["tau_flightDistance2dSig_1"] = 0;
+    //fSingletons["SubJet_csv"] = 0;
+    //fSingletons["z_ratio"] = 0;
+    //fSingletons["trackSipdSig_3"] = 0;
+    //fSingletons["trackSipdSig_2"] = 0;
+    //fSingletons["trackSipdSig_1"] = 0;
+    //fSingletons["trackSipdSig_0"] = 0;
+    //fSingletons["trackSipdSig_1_0"] = 0;
+    //fSingletons["trackSipdSig_0_0"] = 0;
+    //fSingletons["trackSipdSig_1_1"] = 0;
+    //fSingletons["trackSipdSig_0_1"] = 0;
+    //fSingletons["trackSip2dSigAboveCharm_0"] = 0;
+    //fSingletons["trackSip2dSigAboveBottom_0"] = 0;
+    //fSingletons["trackSip2dSigAboveBottom_1"] = 0;
+    //fSingletons["tau1_trackEtaRel_0"] = 0;
+    //fSingletons["tau1_trackEtaRel_1"] = 0;
+    //fSingletons["tau1_trackEtaRel_2"] = 0;
+    //fSingletons["tau0_trackEtaRel_0"] = 0;
+    //fSingletons["tau0_trackEtaRel_1"] = 0;
+    //fSingletons["tau0_trackEtaRel_2"] = 0;
+    //fSingletons["tau_vertexMass_0"] = 0;
+    //fSingletons["tau_vertexEnergyRatio_0"] = 0;
+    //fSingletons["tau_vertexDeltaR_0"] = 0;
+    //fSingletons["tau_flightDistance2dSig_0"] = 0;
+    //fSingletons["tau_vertexMass_1"] = 0;
+    //fSingletons["tau_vertexEnergyRatio_1"] = 0;
+    fSingletons[j]["nProngs"] = 0;
+    //fSingletons["nResonanceProngs"] = 0;
+    fSingletons[j]["resonanceType"] = -1;
+    //fSingletons["nB"] = 0;
+    //fSingletons["nC"] = 0;
+    fSingletons[j]["partonPt"] = 0;
+    fSingletons[j]["partonEta"] = 0;
+    fSingletons[j]["partonPhi"] = 0;
+    fSingletons[j]["partonM"] = 0;
 
-  fCPFArrs["cpf_pt"] = new float[NCPF];
-  fCPFArrs["cpf_eta"] = new float[NCPF];
-  fCPFArrs["cpf_phi"] = new float[NCPF];
-  fCPFArrs["cpf_m"] = new float[NCPF];
-  fCPFArrs["cpf_e"] = new float[NCPF];
-  fCPFArrs["cpf_q"] = new float[NCPF];
-  fCPFArrs["cpf_pfType"] = new float[NCPF];
-  fCPFArrs["cpf_vtxID"] = new float[NCPF];
-  fCPFArrs["cpf_trkChi2"] = new float[NCPF];
-  fCPFArrs["cpf_pup"] = new float[NCPF];
-  fCPFArrs["cpf_vtxChi2"] = new float[NCPF];
-  fCPFArrs["cpf_ecalE"] = new float[NCPF];
-  fCPFArrs["cpf_hcalE"] = new float[NCPF];
-  fCPFArrs["cpf_d0"] = new float[NCPF];
-  fCPFArrs["cpf_dz"] = new float[NCPF];
-  fCPFArrs["cpf_d0Err"] = new float[NCPF];
-  fCPFArrs["cpf_dptdpt"] = new float[NCPF];
-  fCPFArrs["cpf_detadeta"] = new float[NCPF];
-  fCPFArrs["cpf_dphidphi"] = new float[NCPF];
-  fCPFArrs["cpf_dxydxy"] = new float[NCPF];
-  fCPFArrs["cpf_dzdz"] = new float[NCPF];
-  fCPFArrs["cpf_dxydz"] = new float[NCPF];
-  fCPFArrs["cpf_dphidxy"] = new float[NCPF];
-  fCPFArrs["cpf_dlambdadz"] = new float[NCPF];
+    fCPFArrs[j]["cpf_pt"] = new float[NCPF];
+    fCPFArrs[j]["cpf_eta"] = new float[NCPF];
+    fCPFArrs[j]["cpf_phi"] = new float[NCPF];
+    fCPFArrs[j]["cpf_m"] = new float[NCPF];
+    fCPFArrs[j]["cpf_e"] = new float[NCPF];
+    fCPFArrs[j]["cpf_q"] = new float[NCPF];
+    fCPFArrs[j]["cpf_pfType"] = new float[NCPF];
+    fCPFArrs[j]["cpf_vtxID"] = new float[NCPF];
+    fCPFArrs[j]["cpf_trkChi2"] = new float[NCPF];
+    fCPFArrs[j]["cpf_pup"] = new float[NCPF];
+    fCPFArrs[j]["cpf_vtxChi2"] = new float[NCPF];
+    fCPFArrs[j]["cpf_ecalE"] = new float[NCPF];
+    fCPFArrs[j]["cpf_hcalE"] = new float[NCPF];
+    fCPFArrs[j]["cpf_d0"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dz"] = new float[NCPF];
+    fCPFArrs[j]["cpf_d0Err"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dptdpt"] = new float[NCPF];
+    fCPFArrs[j]["cpf_detadeta"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dphidphi"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dxydxy"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dzdz"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dxydz"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dphidxy"] = new float[NCPF];
+    fCPFArrs[j]["cpf_dlambdadz"] = new float[NCPF];
 
-  fIPFArrs["ipf_pt"] = new float[NIPF];
-  fIPFArrs["ipf_eta"] = new float[NIPF];
-  fIPFArrs["ipf_phi"] = new float[NIPF];
-  fIPFArrs["ipf_m"] = new float[NIPF];
-  fIPFArrs["ipf_e"] = new float[NIPF];
-  fIPFArrs["ipf_pfType"] = new float[NIPF];
-  fIPFArrs["ipf_pup"] = new float[NIPF];
-  fIPFArrs["ipf_ecalE"] = new float[NIPF];
-  fIPFArrs["ipf_hcalE"] = new float[NIPF];
-  fIPFArrs["ipf_d0"] = new float[NIPF];
-  fIPFArrs["ipf_dz"] = new float[NIPF];
-  fIPFArrs["ipf_d0Err"] = new float[NIPF];
-  fIPFArrs["ipf_dptdpt"] = new float[NIPF];
-  fIPFArrs["ipf_detadeta"] = new float[NIPF];
-  fIPFArrs["ipf_dphidphi"] = new float[NIPF];
-  fIPFArrs["ipf_dxydxy"] = new float[NIPF];
-  fIPFArrs["ipf_dzdz"] = new float[NIPF];
-  fIPFArrs["ipf_dxydz"] = new float[NIPF];
-  fIPFArrs["ipf_dphidxy"] = new float[NIPF];
-  fIPFArrs["ipf_dlambdadz"] = new float[NIPF];
+    fIPFArrs[j]["ipf_pt"] = new float[NIPF];
+    fIPFArrs[j]["ipf_eta"] = new float[NIPF];
+    fIPFArrs[j]["ipf_phi"] = new float[NIPF];
+    fIPFArrs[j]["ipf_m"] = new float[NIPF];
+    fIPFArrs[j]["ipf_e"] = new float[NIPF];
+    fIPFArrs[j]["ipf_pfType"] = new float[NIPF];
+    fIPFArrs[j]["ipf_pup"] = new float[NIPF];
+    fIPFArrs[j]["ipf_ecalE"] = new float[NIPF];
+    fIPFArrs[j]["ipf_hcalE"] = new float[NIPF];
+    fIPFArrs[j]["ipf_d0"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dz"] = new float[NIPF];
+    fIPFArrs[j]["ipf_d0Err"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dptdpt"] = new float[NIPF];
+    fIPFArrs[j]["ipf_detadeta"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dphidphi"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dxydxy"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dzdz"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dxydz"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dphidxy"] = new float[NIPF];
+    fIPFArrs[j]["ipf_dlambdadz"] = new float[NIPF];
 
-  fSVArrs["sv_pt"] = new float[NSV];
-  fSVArrs["sv_eta"] = new float[NSV];
-  fSVArrs["sv_phi"] = new float[NSV];
-  fSVArrs["sv_mass"] = new float[NSV];
-  fSVArrs["sv_etarel"] = new float[NSV];
-  fSVArrs["sv_phirel"] = new float[NSV];
-  fSVArrs["sv_deltaR"] = new float[NSV];
-  fSVArrs["sv_ntracks"] = new float[NSV];
-  fSVArrs["sv_chi2"] = new float[NSV];
-  fSVArrs["sv_ndf"] = new float[NSV];
-  fSVArrs["sv_normchi2"] = new float[NSV];
-  fSVArrs["sv_dxy"] = new float[NSV];
-  fSVArrs["sv_dxyerr"] = new float[NSV];
-  fSVArrs["sv_dxysig"] = new float[NSV];
-  fSVArrs["sv_d3d"] = new float[NSV];
-  fSVArrs["sv_d3derr"] = new float[NSV];
-  fSVArrs["sv_d3dsig"] = new float[NSV];
-  fSVArrs["sv_enratio"] = new float[NSV];
+    fSVArrs[j]["sv_pt"] = new float[NSV];
+    fSVArrs[j]["sv_eta"] = new float[NSV];
+    fSVArrs[j]["sv_phi"] = new float[NSV];
+    fSVArrs[j]["sv_mass"] = new float[NSV];
+    fSVArrs[j]["sv_etarel"] = new float[NSV];
+    fSVArrs[j]["sv_phirel"] = new float[NSV];
+    fSVArrs[j]["sv_deltaR"] = new float[NSV];
+    fSVArrs[j]["sv_ntracks"] = new float[NSV];
+    fSVArrs[j]["sv_chi2"] = new float[NSV];
+    fSVArrs[j]["sv_ndf"] = new float[NSV];
+    fSVArrs[j]["sv_normchi2"] = new float[NSV];
+    fSVArrs[j]["sv_dxy"] = new float[NSV];
+    fSVArrs[j]["sv_dxyerr"] = new float[NSV];
+    fSVArrs[j]["sv_dxysig"] = new float[NSV];
+    fSVArrs[j]["sv_d3d"] = new float[NSV];
+    fSVArrs[j]["sv_d3derr"] = new float[NSV];
+    fSVArrs[j]["sv_d3dsig"] = new float[NSV];
+    fSVArrs[j]["sv_enratio"] = new float[NSV];
 
-  fPartArrs["parton_pt"] = new float[NPART];
-  fPartArrs["parton_eta"] = new float[NPART];
-  fPartArrs["parton_phi"] = new float[NPART];
-  fPartArrs["parton_m"] = new float[NPART];
-  fPartArrs["parton_pdgid"] = new float[NPART];
+    fPartArrs[j]["parton_pt"] = new float[NPART];
+    fPartArrs[j]["parton_eta"] = new float[NPART];
+    fPartArrs[j]["parton_phi"] = new float[NPART];
+    fPartArrs[j]["parton_m"] = new float[NPART];
+    fPartArrs[j]["parton_pdgid"] = new float[NPART];
 
-  fTree = iTree;
+    fTree = iTree;
 
-  for (auto &iter : fSingletons) {
-    std::stringstream bname;
-    bname << iJetLabel << "_" << iter.first;
-    fTree->Branch(bname.str().c_str(), &(iter.second), (bname.str()+"/F").c_str());
-  }
-  fTree->Branch("n_cpf",&fN_cpf,"n_cpf/I");
-  for (auto &iter : fCPFArrs) {
-    std::stringstream bname;
-    bname << iJetLabel << "_" << iter.first;
-    std::stringstream bname2;
-    bname2 << bname.str() << "[" << NCPF << "]/F";
-    fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
-  }
-  fTree->Branch("n_ipf",&fN_ipf,"n_ipf/I");
-  for (auto &iter : fIPFArrs) {
-    std::stringstream bname;
-    bname << iJetLabel << "_" << iter.first;
-    std::stringstream bname2;
-    bname2 << bname.str() << "[" << NIPF << "]/F";
-    fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
-  }
-  fTree->Branch("n_sv",&fN_sv,"n_sv/I");
-  for (auto &iter : fSVArrs) {
-    std::stringstream bname;
-    bname << iJetLabel << "_" << iter.first;
-    std::stringstream bname2;
-    bname2 << bname.str() << "[" << NSV << "]/F";
-    fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
-  }
-  fTree->Branch("n_part",&fN_part,"n_part/I");
-  for (auto &iter : fPartArrs) {
-    std::stringstream bname;
-    bname << iJetLabel << "_" << iter.first;
-    std::stringstream bname2;
-    bname2 << bname.str() << "[" << NPART << "]/F";
-    fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
+
+    for (auto &iter : fSingletons[j]) {
+      std::stringstream bname;
+      bname << iJetLabel << j << "_" << iter.first;
+      fTree->Branch(bname.str().c_str(), &(iter.second), (bname.str()+"/F").c_str());
+    }
+    std::stringstream bname_cpf;
+    bname_cpf << iJetLabel << j << "_" << "n_cpf";
+    fTree->Branch(bname_cpf.str().c_str(),&fN_cpf[j],(bname_cpf.str()+"/I").c_str());
+    for (auto &iter : fCPFArrs[j]) {
+      std::stringstream bname;
+      bname << iJetLabel << j << "_" << iter.first;
+      std::stringstream bname2;
+      bname2 << bname.str() << "[" << NCPF << "]/F";
+      fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
+    }
+    std::stringstream bname_ipf;
+    bname_ipf << iJetLabel << j << "_" << "n_ipf";
+    fTree->Branch(bname_ipf.str().c_str(),&fN_ipf[j],(bname_ipf.str()+"/I").c_str());
+    for (auto &iter : fIPFArrs[j]) {
+      std::stringstream bname;
+      bname << iJetLabel << j << "_" << iter.first;
+      std::stringstream bname2;
+      bname2 << bname.str() << "[" << NIPF << "]/F";
+      fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
+    }
+    /*
+    fTree->Branch("n_sv",&fN_sv,"n_sv/I");
+    for (auto &iter : fSVArrs) {
+      std::stringstream bname;
+      bname << iJetLabel << "_" << iter.first;
+      std::stringstream bname2;
+      bname2 << bname.str() << "[" << NSV << "]/F";
+      fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
+    }*/
+    std::stringstream bname_part
+    bname_part << iJetLabel << j << "_" << "n_part";
+    fTree->Branch(bname_part.str().c_str(),&fN_part[j],(bname_part.str()+"/I").c_str());
+    for (auto &iter : fPartArrs[j]) {
+      std::stringstream bname;
+      bname << iJetLabel << j << "_" << iter.first;
+      std::stringstream bname2;
+      bname2 << bname.str() << "[" << NPART << "]/F";
+      fTree->Branch(bname.str().c_str(), (iter.second), bname2.str().c_str());
+    }
   }
 
 }
@@ -481,7 +493,6 @@ void PerJetLoader::fillVJet(int iN,
                             unsigned int runNum)
 {
   int lMin = iObjects.size();
-  std::cout << "lMin: " << lMin << ", iN: " << iN << std::endl;
   if(iN < lMin) lMin = iN;
   for(int i0 = 0; i0 < lMin; i0++) {
 
@@ -513,16 +524,16 @@ void PerJetLoader::fillVJet(int iN,
     double jetPtJERUp = jetCorrPt*jetEnergySmearFactorUp;
     double jetPtJERDown = jetCorrPt*jetEnergySmearFactorDown;
 
-    TAddJet *pAddJet = getAddJet(iObjects[i0]);
+    //TAddJet *pAddJet = getAddJet(iObjects[i0]);
 
-    fSingletons["pt"] = jetCorrPtSmear;
-    fSingletons["eta"] = iObjects[i0]->eta;
-    fSingletons["phi"] = iObjects[i0]->phi;
-    fSingletons["mass"]  = JEC*jetEnergySmearFactor*(iObjects[i0]->mass);
-    fSingletons["csv"]  = iObjects[i0]->csv;
-    fSingletons["CHF"]  = iObjects[i0]->chHadFrac;
-    fSingletons["NHF"]  = iObjects[i0]->neuHadFrac;
-    fSingletons["NEMF"]  = iObjects[i0]->neuEmFrac;
+    fSingletons[i0]["pt"] = jetCorrPtSmear;
+    fSingletons[i0]["eta"] = iObjects[i0]->eta;
+    fSingletons[i0]["phi"] = iObjects[i0]->phi;
+    fSingletons[i0]["mass"]  = JEC*jetEnergySmearFactor*(iObjects[i0]->mass);
+    fSingletons[i0]["csv"]  = iObjects[i0]->csv;
+    fSingletons[i0]["CHF"]  = iObjects[i0]->chHadFrac;
+    fSingletons[i0]["NHF"]  = iObjects[i0]->neuHadFrac;
+    fSingletons[i0]["NEMF"]  = iObjects[i0]->neuEmFrac;
     //fSingletons["tau21"]  = (pAddJet->tau2/pAddJet->tau1);
     //fSingletons["tau32"]  = (pAddJet->tau3/pAddJet->tau2);
     //fSingletons["msd"]  = pAddJet->mass_sd0;
@@ -531,8 +542,8 @@ void PerJetLoader::fillVJet(int iN,
     //fSingletons["maxsubscv"] = TMath::Max(TMath::Max(pAddJet->sj1_csv,pAddJet->sj2_csv),TMath::Max(pAddJet->sj3_csv,pAddJet->sj4_csv));
     //fSingletons["doublecsv"] = pAddJet->doublecsv;
     //fSingletons["doublesub"] = pAddJet->Double_sub;
-    fSingletons["ptraw"] = iObjects[i0]->ptRaw;
-    fSingletons["genpt"] = iObjects[i0]->genpt;
+    fSingletons[i0]["ptraw"] = iObjects[i0]->ptRaw;
+    fSingletons[i0]["genpt"] = iObjects[i0]->genpt;
     /*
     fSingletons["e2_b1"] = pAddJet->e2_b1;
     fSingletons["e3_b1"] = pAddJet->e3_b1;
@@ -571,11 +582,11 @@ void PerJetLoader::fillVJet(int iN,
     fSingletons["D2b1"] = pAddJet->e3_b1/(pAddJet->e2_b1*pAddJet->e2_b1*pAddJet->e2_b1);
     fSingletons["D2b2"] = pAddJet->e3_b2/(pAddJet->e2_b2*pAddJet->e2_b2*pAddJet->e2_b2);
     */
-    fSingletons["pt_old"] = iObjects[i0]->pt;
-    fSingletons["jetPtJESUp"] = jetPtJESUp;
-    fSingletons["jetPtJESDown"] = jetPtJESDown;
-    fSingletons["jetPtJERUp"] = jetPtJERUp;
-    fSingletons["jetPtJERDown"] = jetPtJERDown;
+    fSingletons[i0]["pt_old"] = iObjects[i0]->pt;
+    fSingletons[i0]["jetPtJESUp"] = jetPtJESUp;
+    fSingletons[i0]["jetPtJESDown"] = jetPtJESDown;
+    fSingletons[i0]["jetPtJERUp"] = jetPtJERUp;
+    fSingletons[i0]["jetPtJERDown"] = jetPtJERDown;
     /*
     fSingletons["e2_sdb05"] = pAddJet->e2_sdb05;
     fSingletons["e3_sdb05"] = pAddJet->e3_sdb05;
@@ -693,7 +704,7 @@ void PerJetLoader::fillVJet(int iN,
 
     }
     nP = std::min((int)partons.size(), NPART);
-    fSingletons["nProngs"] = nP;
+    fSingletons[i0]["nProngs"] = nP;
 
     std::vector<TGenParticle*> vPartons; vPartons.reserve(nP);
     for (auto &iter : partons)
@@ -706,23 +717,24 @@ void PerJetLoader::fillVJet(int iN,
     TLorentzVector vTmp;
     for (unsigned iP = 0; iP != nP; ++iP) {
       TGenParticle *part = vPartons.at(iP);
-      fPartArrs["parton_pt"][iP] = part->pt;
-      fPartArrs["parton_eta"][iP] = part->eta;
-      fPartArrs["parton_phi"][iP] = part->phi;
-      fPartArrs["parton_m"][iP] = part->mass;
-      fPartArrs["parton_pdgid"][iP] = part->pdgId;
+      fPartArrs[i0]["parton_pt"][iP] = part->pt;
+      fPartArrs[i0]["parton_eta"][iP] = part->eta;
+      fPartArrs[i0]["parton_phi"][iP] = part->phi;
+      fPartArrs[i0]["parton_m"][iP] = part->mass;
+      fPartArrs[i0]["parton_pdgid"][iP] = part->pdgId;
       vTmp.SetPtEtaPhiM(part->pt, part->eta, part->phi, part->mass);
       vPartonSum += vTmp;
     }
-    fSingletons["partonPt"] = vPartonSum.Pt();
-    fSingletons["partonEta"] = vPartonSum.Eta();
-    fSingletons["partonPhi"] = vPartonSum.Phi();
-    fSingletons["partonM"] = vPartonSum.M();
+    fSingletons[i]["partonPt"] = vPartonSum.Pt();
+    fSingletons[i]["partonEta"] = vPartonSum.Eta();
+    fSingletons[i]["partonPhi"] = vPartonSum.Phi();
+    fSingletons[i]["partonM"] = vPartonSum.M();
 
     ///////
     ///look for resonances
-    fSingletons["resonanceType"] = -1;
+    //fSingletons["resonanceType"] = -1;
     // start with top
+    /*
     unsigned target = 6;
     for (unsigned iG = 0; iG != nG; ++iG) {
       TGenParticle *part = (TGenParticle*)((*fGens)[iG]);
@@ -860,6 +872,7 @@ void PerJetLoader::fillVJet(int iN,
       fSingletons["resonanceType"] = 0;
       fSingletons["nResonanceProngs"] = 1;
     }
+    */
 
     //////
 
@@ -912,48 +925,48 @@ void PerJetLoader::fillVJet(int iN,
     int iCPF=0, iIPF=0;
     for (auto *pf : jetPFs) {
       if (pf->q && iCPF < NCPF) { // charged PF
-        fCPFArrs["cpf_pt"][iCPF] = pf->pup * pf->pt / iObjects[i0]->pt;
-        fCPFArrs["cpf_eta"][iCPF] = pf->eta - iObjects[i0]->eta;
-        fCPFArrs["cpf_phi"][iCPF] =SignedDeltaPhi(pf->phi, iObjects[i0]->phi);
-        fCPFArrs["cpf_m"][iCPF] = pf->m;
-        fCPFArrs["cpf_e"][iCPF] = pf->e;
-        fCPFArrs["cpf_q"][iCPF] = pf->q;
-        fCPFArrs["cpf_pfType"][iCPF] = pf->pfType;
-        fCPFArrs["cpf_vtxID"][iCPF] = pf->vtxId;
-        fCPFArrs["cpf_trkChi2"][iCPF] = pf->trkChi2;
-        fCPFArrs["cpf_pup"][iCPF] = pf->pup;
-        fCPFArrs["cpf_vtxChi2"][iCPF] = pf->vtxChi2;
-        fCPFArrs["cpf_ecalE"][iCPF] = pf->ecalE;
-        fCPFArrs["cpf_hcalE"][iCPF] = pf->hcalE;
-        fCPFArrs["cpf_d0"][iCPF] = pf->d0;
-        fCPFArrs["cpf_dz"][iCPF] = pf->dz;
-        fCPFArrs["cpf_d0Err"][iCPF] = pf->d0Err;
-        fCPFArrs["cpf_dptdpt"][iCPF] = pf->dptdpt;
-        fCPFArrs["cpf_detadeta"][iCPF] = pf->detadeta;
-        fCPFArrs["cpf_dphidphi"][iCPF] = pf->dphidphi;
-        fCPFArrs["cpf_dxydxy"][iCPF] = pf->dxydxy;
-        fCPFArrs["cpf_dzdz"][iCPF] = pf->dzdz;
-        fCPFArrs["cpf_dxydz"][iCPF] = pf->dxydz;
-        fCPFArrs["cpf_dphidxy"][iCPF] = pf->dphidxy;
-        fCPFArrs["cpf_dlambdadz"][iCPF] = pf->dlambdadz;
+        fCPFArrs[i0]["cpf_pt"][iCPF] = pf->pup * pf->pt / iObjects[i0]->pt;
+        fCPFArrs[i0]["cpf_eta"][iCPF] = pf->eta - iObjects[i0]->eta;
+        fCPFArrs[i0]["cpf_phi"][iCPF] =SignedDeltaPhi(pf->phi, iObjects[i0]->phi);
+        fCPFArrs[i0]["cpf_m"][iCPF] = pf->m;
+        fCPFArrs[i0]["cpf_e"][iCPF] = pf->e;
+        fCPFArrs[i0]["cpf_q"][iCPF] = pf->q;
+        fCPFArrs[i0]["cpf_pfType"][iCPF] = pf->pfType;
+        fCPFArrs[i0]["cpf_vtxID"][iCPF] = pf->vtxId;
+        fCPFArrs[i0]["cpf_trkChi2"][iCPF] = pf->trkChi2;
+        fCPFArrs[i0]["cpf_pup"][iCPF] = pf->pup;
+        fCPFArrs[i0]["cpf_vtxChi2"][iCPF] = pf->vtxChi2;
+        fCPFArrs[i0]["cpf_ecalE"][iCPF] = pf->ecalE;
+        fCPFArrs[i0]["cpf_hcalE"][iCPF] = pf->hcalE;
+        fCPFArrs[i0]["cpf_d0"][iCPF] = pf->d0;
+        fCPFArrs[i0]["cpf_dz"][iCPF] = pf->dz;
+        fCPFArrs[i0]["cpf_d0Err"][iCPF] = pf->d0Err;
+        fCPFArrs[i0]["cpf_dptdpt"][iCPF] = pf->dptdpt;
+        fCPFArrs[i0]["cpf_detadeta"][iCPF] = pf->detadeta;
+        fCPFArrs[i0]["cpf_dphidphi"][iCPF] = pf->dphidphi;
+        fCPFArrs[i0]["cpf_dxydxy"][iCPF] = pf->dxydxy;
+        fCPFArrs[i0]["cpf_dzdz"][iCPF] = pf->dzdz;
+        fCPFArrs[i0]["cpf_dxydz"][iCPF] = pf->dxydz;
+        fCPFArrs[i0]["cpf_dphidxy"][iCPF] = pf->dphidxy;
+        fCPFArrs[i0]["cpf_dlambdadz"][iCPF] = pf->dlambdadz;
         iCPF++;
       }
       if (iIPF >= NIPF)
         continue;
-      fIPFArrs["ipf_pt"][iIPF] = pf->pup * pf->pt / iObjects[i0]->pt;
+      fIPFArrs[i0]["ipf_pt"][iIPF] = pf->pup * pf->pt / iObjects[i0]->pt;
       // fIPFArrs["ipf_pt"][iIPF] = pf->pup * pf->pt / iObjects[i0]->pt;
-      fIPFArrs["ipf_eta"][iIPF] = pf->eta - iObjects[i0]->eta;
-      fIPFArrs["ipf_phi"][iIPF] = SignedDeltaPhi(pf->phi, iObjects[i0]->phi);
-      fIPFArrs["ipf_m"][iIPF] = pf->m;
-      fIPFArrs["ipf_e"][iIPF] = pf->e;
-      fIPFArrs["ipf_pfType"][iIPF] = pf->pfType;
-      fIPFArrs["ipf_pup"][iIPF] = pf->pup;
-      fIPFArrs["ipf_ecalE"][iIPF] = pf->ecalE;
-      fIPFArrs["ipf_hcalE"][iIPF] = pf->hcalE;
+      fIPFArrs[i0]["ipf_eta"][iIPF] = pf->eta - iObjects[i0]->eta;
+      fIPFArrs[i0]["ipf_phi"][iIPF] = SignedDeltaPhi(pf->phi, iObjects[i0]->phi);
+      fIPFArrs[i0]["ipf_m"][iIPF] = pf->m;
+      fIPFArrs[i0]["ipf_e"][iIPF] = pf->e;
+      fIPFArrs[i0]["ipf_pfType"][iIPF] = pf->pfType;
+      fIPFArrs[i0]["ipf_pup"][iIPF] = pf->pup;
+      fIPFArrs[i0]["ipf_ecalE"][iIPF] = pf->ecalE;
+      fIPFArrs[i0]["ipf_hcalE"][iIPF] = pf->hcalE;
       iIPF++;
     }
-    fN_cpf = std::min(iCPF, NCPF);
-    fN_ipf = std::min(iIPF, NIPF);
+    fN_cpf[i0] = std::min(iCPF, NCPF);
+    fN_ipf[i0] = std::min(iIPF, NIPF);
 
     // fill PF
     /*
