@@ -481,8 +481,8 @@ void PerJetLoader::fillVJet(int iN,
                             unsigned int runNum)
 {
   int lMin = iObjects.size();
+  std::cout << "lMin: " << lMin << ", iN: " << iN << std::endl;
   if(iN < lMin) lMin = iN;
-  std::cout << "num of jets" << lMin << std::endl;
   for(int i0 = 0; i0 < lMin; i0++) {
 
     //JEC
